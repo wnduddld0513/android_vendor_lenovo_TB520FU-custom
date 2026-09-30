@@ -21,11 +21,10 @@
     <string name="game_cpu_category">CPU</string>
     <string name="game_gpu_category">GPU</string>
     <string name="game_perf_footer">Settings apply only while the app is on screen. Clocks return to normal when you leave the app. Thermal protection always stays active.</string>
-    <string name="game_custom_single_title">Single core limit</string>
-    <string name="game_custom_multi_title">Multi core limit</string>
+    <string name="game_custom_cpu_title">CPU clock</string>
     <string name="game_custom_gpu_title">GPU limit</string>
     <string name="game_custom_range_summary" formatted="false">30–100 %</string>
-    <string name="game_custom_cpu_summary" formatted="false">Custom %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">Custom %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">Custom %1$d%%</string>
     <string name="game_custom_level">Custom</string>
     <string name="play_store_category">Play Store</string>

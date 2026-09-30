@@ -18,11 +18,10 @@
     <string name="game_app_add">新增應用程式</string>
     <string name="game_app_remove">移除</string>
     <string name="game_perf_footer">設定檔僅在該應用程式顯示於螢幕上時生效，離開後時脈恢復正常。溫度保護始終有效。</string>
-    <string name="game_custom_single_title">單核限制</string>
-    <string name="game_custom_multi_title">多核限制</string>
+    <string name="game_custom_cpu_title">CPU 時脈</string>
     <string name="game_custom_gpu_title">GPU 限制</string>
     <string name="game_custom_range_summary" formatted="false">30～100%</string>
-    <string name="game_custom_cpu_summary" formatted="false">自訂 %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">自訂 %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">自訂 %1$d%%</string>
     <string name="game_custom_level">自訂</string>
     <string name="play_store_category">Play 商店</string>

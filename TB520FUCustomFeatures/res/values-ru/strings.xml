@@ -18,10 +18,9 @@
     <string name="game_app_add">Добавить приложение</string>
     <string name="game_app_remove">Удалить</string>
     <string name="game_perf_footer">Профиль действует, только пока его приложение на экране. После выхода из приложения частоты возвращаются к норме. Защита от перегрева всегда активна.</string>
-    <string name="game_custom_single_title">Лимит одного ядра</string>
-    <string name="game_custom_multi_title">Лимит нескольких ядер</string>
+    <string name="game_custom_cpu_title">Частота ЦП</string>
     <string name="game_custom_gpu_title">Лимит GPU</string>
-    <string name="game_custom_cpu_summary" formatted="false">Свой %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">Свой %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">Свой %1$d%%</string>
     <string name="game_custom_level">Свой</string>
     <string name="play_store_category">Play Маркет</string>

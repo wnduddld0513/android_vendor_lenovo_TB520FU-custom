@@ -18,11 +18,10 @@
     <string name="game_app_add">添加应用</string>
     <string name="game_app_remove">移除</string>
     <string name="game_perf_footer">配置仅在对应应用显示在屏幕上时生效，离开应用后频率恢复正常。温控保护始终有效。</string>
-    <string name="game_custom_single_title">单核限制</string>
-    <string name="game_custom_multi_title">多核限制</string>
+    <string name="game_custom_cpu_title">CPU 频率</string>
     <string name="game_custom_gpu_title">GPU 限制</string>
     <string name="game_custom_range_summary" formatted="false">30～100%</string>
-    <string name="game_custom_cpu_summary" formatted="false">自定义 %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">自定义 %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">自定义 %1$d%%</string>
     <string name="game_custom_level">自定义</string>
     <string name="play_store_category">Play 商店</string>

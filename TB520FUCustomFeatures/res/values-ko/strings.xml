@@ -18,11 +18,10 @@
     <string name="game_app_add">앱 추가</string>
     <string name="game_app_remove">목록에서 삭제</string>
     <string name="game_perf_footer">설정은 해당 앱이 화면에 있을 때만 적용됩니다. 앱에서 나가면 클럭이 원래대로 돌아옵니다. 발열 보호는 항상 동작합니다.</string>
-    <string name="game_custom_single_title">싱글 코어 제한</string>
-    <string name="game_custom_multi_title">멀티 코어 제한</string>
+    <string name="game_custom_cpu_title">CPU 클럭</string>
     <string name="game_custom_gpu_title">GPU 제한</string>
     <string name="game_custom_range_summary" formatted="false">30~100%</string>
-    <string name="game_custom_cpu_summary" formatted="false">사용자 설정 %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">사용자 설정 %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">사용자 설정 %1$d%%</string>
     <string name="game_custom_level">사용자 설정</string>
     <string name="play_store_category">Play 스토어</string>

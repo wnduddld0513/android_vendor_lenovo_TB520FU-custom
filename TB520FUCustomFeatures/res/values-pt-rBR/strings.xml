@@ -17,11 +17,10 @@
     <string name="game_app_add">Adicionar app</string>
     <string name="game_app_remove">Remover</string>
     <string name="game_perf_footer">Um perfil só se aplica enquanto o app está na tela. As frequências voltam ao normal quando você sai do app. A proteção térmica continua sempre ativa.</string>
-    <string name="game_custom_single_title">Limite de um núcleo</string>
-    <string name="game_custom_multi_title">Limite de vários núcleos</string>
+    <string name="game_custom_cpu_title">Frequência da CPU</string>
     <string name="game_custom_gpu_title">Limite da GPU</string>
     <string name="game_custom_range_summary" formatted="false">30–100%</string>
-    <string name="game_custom_cpu_summary" formatted="false">Personalizado %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">Personalizado %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">Personalizado %1$d%%</string>
     <string name="game_custom_level">Personalizado</string>
     <string name="spoof_title">Exibir Galaxy Tab S11 Ultra na Play Store</string>

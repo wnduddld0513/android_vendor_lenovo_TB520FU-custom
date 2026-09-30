@@ -18,11 +18,10 @@
     <string name="game_app_add">アプリを追加</string>
     <string name="game_app_remove">削除</string>
     <string name="game_perf_footer">プロファイルはそのアプリが画面に表示されている間だけ適用されます。アプリを離れるとクロックは元に戻ります。熱保護は常に有効です。</string>
-    <string name="game_custom_single_title">シングルコア制限</string>
-    <string name="game_custom_multi_title">マルチコア制限</string>
+    <string name="game_custom_cpu_title">CPUクロック</string>
     <string name="game_custom_gpu_title">GPU制限</string>
     <string name="game_custom_range_summary" formatted="false">30～100%</string>
-    <string name="game_custom_cpu_summary" formatted="false">カスタム %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">カスタム %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">カスタム %1$d%%</string>
     <string name="game_custom_level">カスタム</string>
     <string name="play_store_category">Play ストア</string>

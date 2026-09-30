@@ -35,9 +35,9 @@ object GameApps {
     data class Levels(val cpu: Int, val gpu: Int)
 
     /** Custom limits in percent of the cluster maximum / the top GPU clock. */
-    data class Custom(val single: Int, val multi: Int, val gpu: Int) {
+    data class Custom(val cpu: Int, val gpu: Int) {
         companion object {
-            val DEFAULT = Custom(CUSTOM_DEFAULT_PERCENT, CUSTOM_DEFAULT_PERCENT, CUSTOM_DEFAULT_PERCENT)
+            val DEFAULT = Custom(CUSTOM_DEFAULT_PERCENT, CUSTOM_DEFAULT_PERCENT)
         }
     }
 
@@ -93,10 +93,12 @@ object GameApps {
             .forEach { entry ->
                 val f = entry.split(':')
                 if (f.size != 4 || f[0].isEmpty()) return@forEach
-                val single = f[1].toIntOrNull()?.takeIf(::isValidPercent) ?: return@forEach
-                val multi = f[2].toIntOrNull()?.takeIf(::isValidPercent) ?: return@forEach
+                // One CPU percentage for every cluster; the setting keeps the
+                // single/multi pair of GamePerfController, older profiles
+                // (different values) take the multi core one.
+                val cpu = f[2].toIntOrNull()?.takeIf(::isValidPercent) ?: return@forEach
                 val gpu = f[3].toIntOrNull()?.takeIf(::isValidPercent) ?: return@forEach
-                map[f[0]] = Custom(single, multi, gpu)
+                map[f[0]] = Custom(cpu, gpu)
             }
         return map
     }
@@ -114,7 +116,7 @@ object GameApps {
                 ctx,
                 LenovoSettings.GAME_PERF_CUSTOM,
                 customs.entries.joinToString(";") {
-                    "${it.key}:${it.value.single}:${it.value.multi}:${it.value.gpu}"
+                    "${it.key}:${it.value.cpu}:${it.value.cpu}:${it.value.gpu}"
                 },
             )
         }
@@ -160,7 +162,7 @@ object GameApps {
     fun describe(ctx: Context, pkg: String, levels: Levels): String {
         val custom = custom(ctx, pkg)
         val cpu = if (levels.cpu == LEVEL_CUSTOM) {
-            ctx.getString(R.string.game_custom_cpu_summary, custom.single, custom.multi)
+            ctx.getString(R.string.game_custom_cpu_summary, custom.cpu)
         } else {
             levelName(ctx, levels.cpu)
         }

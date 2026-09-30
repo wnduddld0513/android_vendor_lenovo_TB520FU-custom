@@ -17,10 +17,9 @@
     <string name="game_app_add">App hinzufügen</string>
     <string name="game_app_remove">Entfernen</string>
     <string name="game_perf_footer">Ein Profil gilt nur, solange seine App auf dem Bildschirm ist. Beim Verlassen der App kehren die Taktraten zum Normalwert zurück. Der Überhitzungsschutz bleibt immer aktiv.</string>
-    <string name="game_custom_single_title">Limit für einen Kern</string>
-    <string name="game_custom_multi_title">Limit für mehrere Kerne</string>
+    <string name="game_custom_cpu_title">CPU-Takt</string>
     <string name="game_custom_gpu_title">GPU-Limit</string>
-    <string name="game_custom_cpu_summary" formatted="false">Benutzerdefiniert %1$d/%2$d%%</string>
+    <string name="game_custom_cpu_summary" formatted="false">Benutzerdefiniert %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">Benutzerdefiniert %1$d%%</string>
     <string name="game_custom_level">Benutzerdefiniert</string>
     <string name="spoof_title">Galaxy Tab S11 Ultra im Play Store</string>
