@@ -25,17 +25,11 @@
     <string name="game_custom_gpu_summary" formatted="false">사용자 설정 %1$d%%</string>
     <string name="game_custom_level">사용자 설정</string>
     <string name="play_store_category">Play 스토어</string>
-    <string name="spoof_title">Play 스토어에 Galaxy Tab S11 Ultra로 표시</string>
-    <string name="spoof_summary">이 태블릿과 호환되지 않는다고 표시되는 앱을 Play 스토어에서 설치할 수 있게 합니다. 전환하면 Play 스토어 데이터를 지워야 할 수 있고, 다시 시작한 뒤에만 적용됩니다.</string>
-    <string name="spoof_reboot_message">Play 스토어 표시 변경은 태블릿을 다시 시작한 뒤 적용됩니다. 지금 다시 시작할까요?</string>
     <string name="reboot_title">재시작 필요</string>
     <string name="reboot_now">다시 시작</string>
     <string name="reboot_later">나중에</string>
     <string name="integrity_category">무결성 위장</string>
     <string name="integrity_fix_summary">키박스 자동 갱신, TEE 시뮬레이터, Play Integrity 지문을 한 스위치로 켭니다. 다시 시작한 뒤 적용됩니다</string>
-    <string name="integrity_note_title">참고</string>
-    <string name="integrity_galaxy_note_title">Play 스토어 Galaxy 표시</string>
-    <string name="integrity_galaxy_note_summary">Galaxy 표시는 다른 기기로 위장하므로 Play Integrity Fix와 함께 켜면 기기 무결성 검사가 실패합니다.</string>
     <string name="specter_title">Specter (키박스 자동 갱신)</string>
     <string name="specter_summary">Specter 카탈로그에서 키박스를 받아 폐기 여부를 확인하고 즉시 적용합니다. 스위치는 다시 시작한 뒤 적용됩니다</string>
     <string name="keybox_title">키박스 (TEE 시뮬레이터)</string>
@@ -46,7 +40,6 @@
     <string name="pif_summary">GMS 빌드 지문과 DroidGuard 키 차단입니다. 다시 시작한 뒤 적용됩니다</string>
     <string name="integrity_reboot_message">이 변경은 태블릿을 다시 시작한 뒤 적용됩니다. 지금 다시 시작할까요?</string>
     <string name="integrity_reboot_off_message">기능을 끄면 다시 시작한 뒤 꺼지고, 그때 관련 데이터(키박스, 대상 목록, 지문 데이터)가 삭제됩니다. 지금 다시 시작할까요?</string>
-    <string name="integrity_reboot_galaxy_off_message">Play Integrity Fix를 켜면서 충돌하는 Play 스토어 Galaxy 표시를 껐습니다. 둘 다 다시 시작한 뒤 적용됩니다. 지금 다시 시작할까요?</string>
     <string name="integrity_status_category">상태</string>
     <string name="keybox_state_title">키박스</string>
     <string name="keybox_state_installed">설치됨</string>

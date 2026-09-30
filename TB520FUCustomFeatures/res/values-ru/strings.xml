@@ -24,9 +24,6 @@
     <string name="game_custom_gpu_summary" formatted="false">Свой %1$d%%</string>
     <string name="game_custom_level">Свой</string>
     <string name="play_store_category">Play Маркет</string>
-    <string name="spoof_title">Galaxy Tab S11 Ultra в Play Маркете</string>
-    <string name="spoof_summary">Позволяет Play Маркету предлагать приложения, помеченные как несовместимые с этим планшетом. После переключения может понадобиться очистить данные Play Маркета; применяется только после перезапуска.</string>
-    <string name="spoof_reboot_message">Смена идентичности в Play Маркете применяется после перезапуска планшета. Перезапустить сейчас?</string>
     <string name="reboot_title">Требуется перезапуск</string>
     <string name="reboot_now">Перезапустить</string>
     <string name="reboot_later">Позже</string>

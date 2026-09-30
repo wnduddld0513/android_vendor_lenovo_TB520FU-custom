@@ -98,18 +98,12 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
             Integrity.set(Integrity.SPECTER, enabled)
             if (enabled) IntegrityJobService.schedule(requireContext())
             else IntegrityJobService.cancel(requireContext())
-            // Same conflict handling as the master switch on the main screen.
-            var galaxyOff = false
-            if (enabled && DeviceSpoof.enabled) {
-                DeviceSpoof.enabled = false
-                galaxyOff = true
-            }
             Integrity.askReboot(
                 this,
-                when {
-                    !enabled -> R.string.integrity_reboot_off_message
-                    galaxyOff -> R.string.integrity_reboot_galaxy_off_message
-                    else -> R.string.integrity_reboot_message
+                if (enabled) {
+                    R.string.integrity_reboot_message
+                } else {
+                    R.string.integrity_reboot_off_message
                 },
             )
             true

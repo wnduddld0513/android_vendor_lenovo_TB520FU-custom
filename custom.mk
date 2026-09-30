@@ -18,12 +18,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     tb520fu-input-custom
 
-# Galaxy Tab S11 Ultra identity for the Play Store: snapshots
-# persist.sys.tb520fu.spoof_galaxy into sys.tb520fu.spoof_galaxy at boot.
-# Needs patches/frameworks_base-0005 (PropImitationHooks).
-PRODUCT_PACKAGES += \
-    init.tb520fu.spoof.rc
-
 # Play Integrity spoofing ("Custom features" > Integrity): snapshots
 # persist.sys.tb520fu.integrity_* into sys.tb520fu.integrity_* at boot.
 # Needs patches/frameworks_base-0006 (keybox attestation) and -0007 (PIF

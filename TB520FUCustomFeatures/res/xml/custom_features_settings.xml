@@ -28,12 +28,6 @@
             android:summary="@string/integrity_fix_summary"
             android:persistent="false" />
 
-        <SwitchPreferenceCompat
-            android:key="spoof_galaxy"
-            android:title="@string/spoof_title"
-            android:summary="@string/spoof_summary"
-            android:persistent="false" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -57,14 +57,6 @@ mkdir -p "$STATE"
 : > "$NEW_LIST"
 
 # frameworks/base
-# 0005: Optional Galaxy Tab S11 Ultra (SM-X930) identity for the Play Store,
-#       set from "Custom features" (persist.sys.tb520fu.spoof_galaxy). The
-#       framework reads the boot-time snapshot sys.tb520fu.spoof_galaxy, so the
-#       switch only takes effect after a restart. Applies to the Play Store and
-#       the Play services device check-in; the GMS droidguard process keeps its
-#       Play Integrity behaviour.
-apply_patch frameworks/base \
-    "$PATCHES/frameworks_base-0005-tb520fu-galaxy-device-spoof.patch"
 # 0006: Key attestation spoofing ("Custom features" > Integrity, the
 #       TEESimulator-RS / TrickyStore port). The keystore client in the app
 #       processes asks the system_server service tb520fu.keybox (published by

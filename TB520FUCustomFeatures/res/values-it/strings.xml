@@ -24,9 +24,6 @@
     <string name="game_custom_cpu_summary" formatted="false">Personalizzato %1$d%%</string>
     <string name="game_custom_gpu_summary" formatted="false">Personalizzato %1$d%%</string>
     <string name="game_custom_level">Personalizzato</string>
-    <string name="spoof_title">Mostra Galaxy Tab S11 Ultra nel Play Store</string>
-    <string name="spoof_summary">Consente al Play Store di offrire app indicate come non compatibili con questo tablet. Dopo la modifica potrebbe servire cancellare i dati del Play Store; si applica solo dopo un riavvio.</string>
-    <string name="spoof_reboot_message">La modifica dell\'identità nel Play Store si applica dopo il riavvio del tablet. Riavviare ora?</string>
     <string name="reboot_title">Riavvio necessario</string>
     <string name="reboot_now">Riavvia</string>
     <string name="reboot_later">Più tardi</string>

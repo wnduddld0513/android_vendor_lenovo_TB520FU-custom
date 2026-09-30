@@ -1,8 +1,8 @@
 diff --git a/core/java/com/android/internal/util/PropImitationHooks.java b/core/java/com/android/internal/util/PropImitationHooks.java
-index efc2bc4..5d5edc2 100644
+index 40e51e2..a87addc 100644
 --- a/core/java/com/android/internal/util/PropImitationHooks.java
 +++ b/core/java/com/android/internal/util/PropImitationHooks.java
-@@ -263,6 +263,15 @@ public class PropImitationHooks {
+@@ -226,6 +226,15 @@ public class PropImitationHooks {
              return;
          }
  
@@ -18,7 +18,7 @@ index efc2bc4..5d5edc2 100644
          // Guard: isolated processes cannot access content providers (Settings.*).
          if (android.os.Process.isIsolated()) {
              dlog("Skipping setPlayIntegrityProps in isolated process");
-@@ -397,6 +406,13 @@ public class PropImitationHooks {
+@@ -360,6 +369,13 @@ public class PropImitationHooks {
              return;
          }
  

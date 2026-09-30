@@ -25,9 +25,6 @@
     <string name="game_custom_gpu_summary" formatted="false">カスタム %1$d%%</string>
     <string name="game_custom_level">カスタム</string>
     <string name="play_store_category">Play ストア</string>
-    <string name="spoof_title">Play ストアで Galaxy Tab S11 Ultra として表示</string>
-    <string name="spoof_summary">このタブレットでは互換性がないと表示されるアプリを Play ストアからインストールできるようにします。切り替え後に Play ストアのデータを消去する必要がある場合があり、再起動後にのみ反映されます。</string>
-    <string name="spoof_reboot_message">Play ストアの表示変更はタブレットの再起動後に反映されます。今すぐ再起動しますか？</string>
     <string name="reboot_title">再起動が必要です</string>
     <string name="reboot_now">再起動</string>
     <string name="reboot_later">後で</string>

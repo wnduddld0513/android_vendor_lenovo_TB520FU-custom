@@ -25,9 +25,6 @@
     <string name="game_custom_gpu_summary" formatted="false">自訂 %1$d%%</string>
     <string name="game_custom_level">自訂</string>
     <string name="play_store_category">Play 商店</string>
-    <string name="spoof_title">在 Play 商店顯示為 Galaxy Tab S11 Ultra</string>
-    <string name="spoof_summary">讓 Play 商店提供被標示為與本平板不相容的應用程式。切換後可能需要清除 Play 商店資料，且僅在重新啟動後生效。</string>
-    <string name="spoof_reboot_message">Play 商店顯示變更會在平板重新啟動後生效。要立即重新啟動嗎？</string>
     <string name="reboot_title">需要重新啟動</string>
     <string name="reboot_now">重新啟動</string>
     <string name="reboot_later">稍後</string>

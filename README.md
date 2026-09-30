@@ -9,13 +9,13 @@ Contents:
 
 | Path | What |
 |---|---|
-| `TB520FUCustomFeatures/` | "Custom features" app (Settings > System): game performance and the Galaxy Tab S11 Ultra identity for the Play Store |
+| `TB520FUCustomFeatures/` | "Custom features" app (Settings > System): game performance and the Play Integrity Fix switch |
 | `input/` | `tb520fu-input-custom.jar`, the game performance enforcement and the first-boot Lenovo Notes install loaded into system_server by `tb520fu-input` |
 | `ZuiNotes/` | Lenovo Notes (stock `ZuiNotes.apk` from the global ROM), installed as a user app on first boot (see below) |
 | `FeathersLiveWallpaper/` | Pixel "Feathers" Porcelain live wallpaper, the default wallpaper |
 | `overlay/FrameworksResTB520FUCustom/` | defaults for the notes role and the wallpaper |
 | `overlay/UpdaterResTB520FU/` | the updater's SourceForge folder and hidden certified-props item |
-| `init/` | `init.tb520fu.spoof.rc`, the boot-time spoof snapshot |
+| `init/` | `init.tb520fu.integrity.rc`, the boot-time Play Integrity Fix snapshot |
 | `sepolicy/vendor/` | the cpufreq/kgsl rules of the game performance controller |
 | `patches/` | PixelOS source patches, applied by `patches/apply.sh` |
 | `integrity/` | Play Integrity Fix (optional) (Specter keybox renewal, TEESimulator-RS keybox service in `input/`, PIF toggle in patches 0006/0007); see `integrity/README.md` |
