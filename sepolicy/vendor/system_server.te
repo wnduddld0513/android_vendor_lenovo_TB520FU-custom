@@ -1,0 +1,4 @@
+# tb520fu-input GamePerfController: per-app CPU caps/floors and GPU power levels
+allow system_server sysfs_devices_system_cpu:file rw_file_perms;
+allow system_server vendor_sysfs_kgsl:dir r_dir_perms;
+allow system_server vendor_sysfs_kgsl:file rw_file_perms;

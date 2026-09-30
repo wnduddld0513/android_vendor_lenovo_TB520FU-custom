@@ -1,0 +1,14 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// Framework resources of the optional TB520FU customizations: the Lenovo Notes
+// role and the default wallpaper. A separate overlay from
+// FrameworksResTB520FU so a plain build (no customizations repository) never
+// sees them.
+//
+
+runtime_resource_overlay {
+    name: "FrameworksResTB520FUCustom",
+    product_specific: true,
+}

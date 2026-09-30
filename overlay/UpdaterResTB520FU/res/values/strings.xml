@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Builds are published in this SourceForge folder: <package>.zip with
+         <package>.json (tools/ota_json.py). The updater
+         reads the folder's RSS feed (packages_apps_Updater-0001). -->
+    <string name="updater_server_url" translatable="false">https://sourceforge.net/projects/pixelos-unofficial-tb520fu/rss?path=/seventeen/OTA</string>
+
+</resources>

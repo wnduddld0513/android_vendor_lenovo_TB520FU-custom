@@ -1,0 +1,29 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// "Custom features" (Settings > System): the optional TB520FU customizations
+// with a UI - game performance and the Play Store identity. The device tree's
+// TB520FUParts stays the device port; this app exists only while
+// vendor/lenovo/TB520FU-custom is synced.
+//
+
+android_app {
+    name: "TB520FUCustomFeatures",
+
+    srcs: ["src/**/*.kt"],
+    resource_dirs: ["res"],
+    certificate: "platform",
+    platform_apis: true,
+    system_ext_specific: true,
+    privileged: true,
+
+    static_libs: [
+        "SettingsLib",
+        "androidx.preference_preference",
+    ],
+
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+}

@@ -1,0 +1,17 @@
+//
+// Pixel "Feathers" live wallpapers (com.google.pixel.wallpapers23), unmodified
+// from the Pixel Fold (felix) OTA cp2a.260705.006, product/app/WallpapersBReel2023F10.
+// Added by the device maintainer; not part of PixelOS.
+//
+
+android_app_import {
+    name: "FeathersLiveWallpaper",
+    apk: "FeathersLiveWallpaper.apk",
+    presigned: true,
+    // Signed with v2+; already zipaligned with stored JNI libs.
+    preprocessed: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+}

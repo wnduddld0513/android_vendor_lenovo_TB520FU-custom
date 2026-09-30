@@ -1,0 +1,5 @@
+# Optional Galaxy Tab S11 Ultra identity for the Play Store (TB520FUParts).
+# Snapshot the switch at boot so toggling it only takes effect after a reboot:
+# PropImitationHooks reads sys.tb520fu.spoof_galaxy, never the persist value.
+on boot
+    setprop sys.tb520fu.spoof_galaxy ${persist.sys.tb520fu.spoof_galaxy:-0}

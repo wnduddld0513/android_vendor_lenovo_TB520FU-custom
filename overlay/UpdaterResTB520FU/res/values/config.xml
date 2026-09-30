@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The upstream URL serves an AOSPA properties overlay, not our package or a keybox. -->
+    <bool name="config_showCertifiedPropsUpdate">false</bool>
+</resources>

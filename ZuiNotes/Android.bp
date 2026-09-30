@@ -1,0 +1,32 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// Lenovo Notes (ZuiNotes) from the stock global ROM. It is the notes app the
+// framework opens from the pen button and the lock screen
+// (config_enableDefaultNotes in FrameworksResTB520FUCustom).
+//
+
+prebuilt_etc {
+    name: "privapp-permissions-com.zui.notes.xml",
+    src: "privapp-permissions-com.zui.notes.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "ZuiNotes",
+
+    apk: "ZuiNotes.apk",
+    // Signed with v2+; keep the stock signature.
+    preprocessed: true,
+    presigned: true,
+    privileged: true,
+    system_ext_specific: true,
+
+    dex_preopt: {
+        enabled: false,
+    },
+
+    required: ["privapp-permissions-com.zui.notes.xml"],
+}

@@ -1,0 +1,20 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// Game performance enforcement, loaded into system_server by tb520fu-input.
+// InputCore loads /system_ext/framework/tb520fu-input-custom.jar when it is
+// present and calls com.tb520fu.input.custom.CustomInput through
+// com.tb520fu.input.InputExtension, so a plain build without this repository
+// simply has no game performance enforcement.
+//
+
+java_library {
+    name: "tb520fu-input-custom",
+
+    srcs: ["src/**/*.java"],
+    libs: ["//device/lenovo/TB520FU:tb520fu-input"],
+    platform_apis: true,
+    system_ext_specific: true,
+    installable: true,
+}

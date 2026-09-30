@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Default wallpaper: Pixel "Feathers" Porcelain live wallpaper
+         (FeathersLiveWallpaper.apk). default_wallpaper in the device tree stays
+         as the fallback. -->
+    <string name="default_wallpaper_component" translatable="false">com.google.pixel.wallpapers23/.liveBirds.porcelain.PorcelainWallpaperService</string>
+
+    <!-- Lenovo Notes as the notes app (stylus button, lock screen notes), as stock -->
+    <bool name="config_enableDefaultNotes">true</bool>
+    <string name="config_defaultNotes" translatable="false">com.zui.notes</string>
+</resources>

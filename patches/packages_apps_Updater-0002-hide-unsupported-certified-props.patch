@@ -1,0 +1,27 @@
+diff --git a/app/src/main/java/net/pixelos/ota/preferences/PreferencesScreen.kt b/app/src/main/java/net/pixelos/ota/preferences/PreferencesScreen.kt
+index 5a05f19..d4c1dcb 100644
+--- a/app/src/main/java/net/pixelos/ota/preferences/PreferencesScreen.kt
++++ b/app/src/main/java/net/pixelos/ota/preferences/PreferencesScreen.kt
+@@ -200,7 +200,9 @@ private fun PreferencesContent(
+         }
+     }
+ 
+-    CertifiedPropsPreferences(certifiedPropsRepository, coroutineScope)
++    if (LocalContext.current.resources.getBoolean(R.bool.config_showCertifiedPropsUpdate)) {
++        CertifiedPropsPreferences(certifiedPropsRepository, coroutineScope)
++    }
+ }
+ 
+ @Composable
+diff --git a/app/src/main/res/values/config.xml b/app/src/main/res/values/config.xml
+index 0da17a3..e066d35 100644
+--- a/app/src/main/res/values/config.xml
++++ b/app/src/main/res/values/config.xml
+@@ -25,4 +25,7 @@
+     <!-- Whether the recovery update option should be hidden. -->
+     <bool name="config_hideRecoveryUpdate">false</bool>
+ 
++    <!-- Whether a compatible certified-build-properties overlay is provided. -->
++    <bool name="config_showCertifiedPropsUpdate">true</bool>
++
+ </resources>

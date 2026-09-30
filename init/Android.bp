@@ -1,0 +1,16 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// Galaxy Tab S11 Ultra identity for the Play Store: snapshot the switch
+// (persist.sys.tb520fu.spoof_galaxy, "Custom features") at boot so toggling it
+// only takes effect after a restart. PropImitationHooks in the framework reads
+// sys.tb520fu.spoof_galaxy, never the persist value
+// (patches/frameworks_base-0005-tb520fu-galaxy-device-spoof.patch).
+//
+
+prebuilt_etc {
+    name: "init.tb520fu.spoof.rc",
+    src: "init.tb520fu.spoof.rc",
+    sub_dir: "init",
+}

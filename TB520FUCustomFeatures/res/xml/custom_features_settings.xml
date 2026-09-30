@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/app_name">
+
+    <PreferenceCategory
+        android:key="custom"
+        android:title="@string/app_name">
+
+        <Preference
+            android:key="game_perf"
+            android:title="@string/game_perf_title"
+            android:summary="@string/game_perf_summary"
+            android:fragment="com.tb520fu.customfeatures.GamePerfFragment" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="play_store"
+        android:title="@string/play_store_category">
+
+        <SwitchPreferenceCompat
+            android:key="spoof_galaxy"
+            android:title="@string/spoof_title"
+            android:summary="@string/spoof_summary"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
