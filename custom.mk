@@ -24,7 +24,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     init.tb520fu.spoof.rc
 
-# Lenovo Notes (stock ZuiNotes from the global ROM)
+# Lenovo Notes (stock ZuiNotes from the global ROM). Shipped as a plain file
+# at /system_ext/etc/preinstall/ZuiNotes.apk, not as a system app:
+# tb520fu-input-custom.jar installs it into /data once after the first boot
+# (NotesPreinstall.java), so the user can uninstall it like any other app.
 PRODUCT_PACKAGES += \
     ZuiNotes
 

@@ -21,15 +21,20 @@ public final class CustomInput implements InputExtension {
     private static final String TAG = "TB520FUCustom";
 
     private GamePerfController mGamePerf;
+    private NotesPreinstall mNotes;
 
     @Override
     public void init(Context context, Handler handler) {
         mGamePerf = new GamePerfController(context, handler);
+        mNotes = new NotesPreinstall(context, handler);
     }
 
     @Override
     public void start() {
         Safe.run("game performance", mGamePerf::start).run();
+        // Installs Lenovo Notes from /system_ext/etc/preinstall once after the
+        // first boot; a no-op on every later boot and after the user removes it.
+        Safe.run("notes preinstall", mNotes::start).run();
     }
 
     @Override

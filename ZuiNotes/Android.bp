@@ -6,27 +6,22 @@
 // framework opens from the pen button and the lock screen
 // (config_enableDefaultNotes in FrameworksResTB520FUCustom).
 //
+// The APK is NOT a system app. It is shipped as a plain, unsigned file on the
+// read-only system_ext partition and installed into /data as an ordinary,
+// removable app once after the first boot by system_server
+// (input/src/com/tb520fu/input/custom/NotesPreinstall.java). Keeping it out of
+// the app scan means an update cannot be blocked by it and the user can
+// uninstall it like any other app.
+//
+// prebuilt_etc copies the file as-is: no signing, no dexpreopt, no APK
+// validation, and no PRODUCT_COPY_FILES (which rejects .apk destinations).
+//
 
 prebuilt_etc {
-    name: "privapp-permissions-com.zui.notes.xml",
-    src: "privapp-permissions-com.zui.notes.xml",
-    sub_dir: "permissions",
-    system_ext_specific: true,
-}
-
-android_app_import {
     name: "ZuiNotes",
-
-    apk: "ZuiNotes.apk",
-    // Signed with v2+; keep the stock signature.
-    preprocessed: true,
-    presigned: true,
-    privileged: true,
+    src: "ZuiNotes.apk",
+    // Without this the module name (ZuiNotes) becomes the installed file name.
+    filename: "ZuiNotes.apk",
+    sub_dir: "preinstall",
     system_ext_specific: true,
-
-    dex_preopt: {
-        enabled: false,
-    },
-
-    required: ["privapp-permissions-com.zui.notes.xml"],
 }

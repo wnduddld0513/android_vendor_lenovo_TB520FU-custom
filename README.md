@@ -10,8 +10,8 @@ Contents:
 | Path | What |
 |---|---|
 | `TB520FUCustomFeatures/` | "Custom features" app (Settings > System): game performance and the Galaxy Tab S11 Ultra identity for the Play Store |
-| `input/` | `tb520fu-input-custom.jar`, the game performance enforcement loaded into system_server by `tb520fu-input` |
-| `ZuiNotes/` | Lenovo Notes (stock `ZuiNotes.apk` from the global ROM) |
+| `input/` | `tb520fu-input-custom.jar`, the game performance enforcement and the first-boot Lenovo Notes install loaded into system_server by `tb520fu-input` |
+| `ZuiNotes/` | Lenovo Notes (stock `ZuiNotes.apk` from the global ROM), installed as a user app on first boot (see below) |
 | `FeathersLiveWallpaper/` | Pixel "Feathers" Porcelain live wallpaper, the default wallpaper |
 | `overlay/FrameworksResTB520FUCustom/` | defaults for the notes role and the wallpaper |
 | `overlay/UpdaterResTB520FU/` | the updater's SourceForge folder and hidden certified-props item |
@@ -20,6 +20,32 @@ Contents:
 | `patches/` | PixelOS source patches, applied by `patches/apply.sh` |
 | `tools/custom_strings.py` | generates the app's `res/values*/strings.xml` |
 | `tools/ota_json.py` | writes the updater description of a build |
+
+## Lenovo Notes (ZuiNotes)
+
+The stock Lenovo Notes APK is not shipped as a system app. `ZuiNotes/Android.bp`
+installs it as a plain file with `prebuilt_etc` (no signing, no dexpreopt, no app
+scan) to `/system_ext/etc/preinstall/ZuiNotes.apk`, and
+`input/src/com/tb520fu/input/custom/NotesPreinstall.java` - loaded into
+system_server like the rest of `tb520fu-input-custom.jar` - installs it into
+`/data` with a PackageInstaller session once. `start()` runs at
+LOCKED_BOOT_COMPLETED, which can be before user 0 is unlocked and `/data` is
+mounted, so it installs right away when user 0 is already unlocked and
+otherwise waits for `ACTION_USER_UNLOCKED`. It is a normal, removable app: the
+user can update or uninstall it, and it never gets in the way of a re-signed
+build the way a system app with a different signature would.
+
+Once the install succeeds the `Settings.Global` flag `tb520fu_notes_preinstalled`
+is set, and the install is skipped from then on. Uninstalling the app therefore
+does not bring it back; only a factory reset (or clearing the flag) does. If the
+install fails, the flag stays unset and the next boot retries. If the app is
+already installed (an older build that still had it as a system app, or the user
+installed it from the store), the flag is just set and nothing is reinstalled.
+
+The two privileged permissions the old `privapp-permissions-com.zui.notes.xml`
+granted are gone with it. Neither was requested by the APK
+(`android.permission.WRITE_SECURE_SETTINGS`, `android.permission.READ_PRIVILEGED_PHONE_STATE`),
+so they were inert; the app never relied on them.
 
 ## How it hooks into the device tree
 
