@@ -122,9 +122,14 @@ object KeyboxRenewal {
         } catch (t: Throwable) {
             return null
         }
-        val version = SystemProperties.get("net.pixelos.version", "")
-        if (template.isEmpty() || version.isEmpty()) return null
-        val url = template.replace("{version}", version)
+        var version = SystemProperties.get("net.pixelos.version", "")
+        if (version.isEmpty()) version = "seventeen"
+        var url = template.replace("{version}", version)
+        if (!url.contains(version)) {
+            // The template lost its {version} placeholder; put the branch back
+            // so the request cannot 404 on a version-less URL.
+            url = url.replace("/official_devices/", "/official_devices/$version/")
+        }
         return httpGet(url)
     }
 

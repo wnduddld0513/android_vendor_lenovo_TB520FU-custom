@@ -80,6 +80,12 @@ apply_patch frameworks/base \
 #       snapshot of the switch.
 apply_patch frameworks/base \
     "$PATCHES/frameworks_base-0007-tb520fu-pif-toggle.patch"
+# 0008: The certified build properties URL is built defensively: the branch
+#       comes from net.pixelos.version and is put back when the template has
+#       no {version} placeholder, so the AttestationService fetch cannot 404
+#       on a version-less URL (the reason fetched_pif stayed empty).
+apply_patch frameworks/base \
+    "$PATCHES/frameworks_base-0008-tb520fu-pif-url.patch"
 
 # packages/apps/Updater
 # 0001: SourceForge folder as update server (RSS feed of the OTA folder):

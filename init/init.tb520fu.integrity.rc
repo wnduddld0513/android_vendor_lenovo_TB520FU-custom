@@ -1,8 +1,9 @@
-# Optional Play Integrity spoofing ("Custom features" > Integrity).
-# Snapshot the switches at boot: the framework hooks and the tb520fu-input-custom
+# Play Integrity Fix ("Custom features").
+# Snapshot the switch at boot: the framework hooks and the tb520fu-input-custom
 # keybox service read only the sys.* snapshots, so a change needs a restart.
-# After the first restart, keybox and fingerprint data updates apply live.
+# Unset persist properties (fresh install, factory reset) mean on, so the
+# feature is enabled by default; the app writes an explicit 0 or 1 when used.
 on boot
-    setprop sys.tb520fu.integrity_specter ${persist.sys.tb520fu.integrity_specter:-0}
-    setprop sys.tb520fu.integrity_teesim ${persist.sys.tb520fu.integrity_teesim:-0}
-    setprop sys.tb520fu.integrity_pif ${persist.sys.tb520fu.integrity_pif:-0}
+    setprop sys.tb520fu.integrity_specter ${persist.sys.tb520fu.integrity_specter:-1}
+    setprop sys.tb520fu.integrity_teesim ${persist.sys.tb520fu.integrity_teesim:-1}
+    setprop sys.tb520fu.integrity_pif ${persist.sys.tb520fu.integrity_pif:-1}

@@ -22,34 +22,16 @@
         android:key="play_store"
         android:title="@string/play_store_category">
 
+        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+            android:key="integrity_fix"
+            android:title="@string/integrity_fix_title"
+            android:summary="@string/integrity_fix_summary"
+            android:persistent="false" />
+
         <SwitchPreferenceCompat
             android:key="spoof_galaxy"
             android:title="@string/spoof_title"
             android:summary="@string/spoof_summary"
-            android:persistent="false" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="integrity"
-        android:title="@string/integrity_category">
-
-        <com.tb520fu.customfeatures.TitleClickSwitchPreference
-            android:key="integrity_specter"
-            android:title="@string/specter_title"
-            android:summary="@string/specter_summary"
-            android:persistent="false" />
-
-        <com.tb520fu.customfeatures.TitleClickSwitchPreference
-            android:key="integrity_teesim"
-            android:title="@string/teesim_title"
-            android:summary="@string/teesim_summary"
-            android:persistent="false" />
-
-        <com.tb520fu.customfeatures.TitleClickSwitchPreference
-            android:key="integrity_pif"
-            android:title="@string/pif_title"
-            android:summary="@string/pif_summary"
             android:persistent="false" />
 
     </PreferenceCategory>

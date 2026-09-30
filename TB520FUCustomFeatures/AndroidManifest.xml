@@ -30,6 +30,14 @@
                        android:resource="@string/app_summary" />
             <meta-data android:name="com.android.settings.icon"
                        android:resource="@drawable/ic_parts" />
+
+            <!-- Order within the Settings "Automation and intelligence" tile
+                 group. The device tree's "Lenovo features" (com.tb520fu.parts)
+                 has no order (0) and the group sorts by order descending, then
+                 by package name, so a negative order puts "Custom features"
+                 below it. -->
+            <meta-data android:name="com.android.settings.order"
+                       android:value="-1" />
         </activity>
 
         <!-- Keybox renewal (Specter port); scheduled only while the switch is on -->

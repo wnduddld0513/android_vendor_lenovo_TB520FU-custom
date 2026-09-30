@@ -16,52 +16,35 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import org.json.JSONObject
 
 /**
- * Management screens of the Integrity features; one fragment, one screen:
+ * Management screen of the "Play Integrity Fix" feature; one screen for the
+ * whole stack, opened by tapping the title of the switch on the main screen:
  *
- *  - keybox  the Specter port: state, automatic renewal, renew now, delete
- *  - teesim  the TEESimulator-RS port: state and the per-app target list
- *  - pif     the PlayIntegrityFix port: fingerprint data state, refresh, clear
+ *  - keybox   the Specter port: state, automatic renewal, renew now, delete
+ *  - teesim   the TEESimulator-RS port: state and the per-app target list
+ *  - pif      the PlayIntegrityFix port: fingerprint data state, refresh, clear
  *
- * The switches on the main screen only arm the features (a restart applies
- * them); everything on these screens acts live through the system_server
- * keybox service.
+ * The main switch only arms the features (a restart applies them); everything
+ * on this screen acts live through the system_server keybox service.
  */
 class IntegrityFragment : SettingsBasePreferenceFragment() {
 
-    private val screen: String
-        get() = requireArguments().getString(ARG_SCREEN) ?: SCREEN_KEYBOX
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        when (screen) {
-            SCREEN_TEESIM -> setPreferencesFromResource(R.xml.integrity_teesim, rootKey)
-            SCREEN_PIF -> setPreferencesFromResource(R.xml.integrity_pif, rootKey)
-            else -> setPreferencesFromResource(R.xml.integrity_keybox, rootKey)
-        }
-        when (screen) {
-            SCREEN_TEESIM -> bindTeesim()
-            SCREEN_PIF -> bindPif()
-            else -> bindKeybox()
-        }
+        setPreferencesFromResource(R.xml.integrity_fix, rootKey)
+        bindKeybox()
+        bindTeesim()
+        bindPif()
     }
 
     override fun onResume() {
         super.onResume()
-        activity?.setTitle(
-            when (screen) {
-                SCREEN_TEESIM -> R.string.teesim_title
-                SCREEN_PIF -> R.string.pif_title
-                else -> R.string.keybox_title
-            }
-        )
+        activity?.setTitle(R.string.integrity_fix_title)
         refresh()
     }
 
     private fun refresh() {
-        when (screen) {
-            SCREEN_TEESIM -> refreshTeesim()
-            SCREEN_PIF -> refreshPif()
-            else -> refreshKeybox()
-        }
+        refreshKeybox()
+        refreshTeesim()
+        refreshPif()
     }
 
     //
@@ -115,10 +98,19 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
             Integrity.set(Integrity.SPECTER, enabled)
             if (enabled) IntegrityJobService.schedule(requireContext())
             else IntegrityJobService.cancel(requireContext())
+            // Same conflict handling as the master switch on the main screen.
+            var galaxyOff = false
+            if (enabled && DeviceSpoof.enabled) {
+                DeviceSpoof.enabled = false
+                galaxyOff = true
+            }
             Integrity.askReboot(
                 this,
-                if (enabled) R.string.integrity_reboot_message
-                else R.string.integrity_reboot_off_message,
+                when {
+                    !enabled -> R.string.integrity_reboot_off_message
+                    galaxyOff -> R.string.integrity_reboot_galaxy_off_message
+                    else -> R.string.integrity_reboot_message
+                },
             )
             true
         }
@@ -358,17 +350,5 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
                 refresh()
             }
         }.start()
-    }
-
-    companion object {
-        const val ARG_SCREEN = "screen"
-        const val SCREEN_KEYBOX = "keybox"
-        const val SCREEN_TEESIM = "teesim"
-        const val SCREEN_PIF = "pif"
-
-        fun newInstance(screen: String): IntegrityFragment =
-            IntegrityFragment().apply {
-                arguments = Bundle().apply { putString(ARG_SCREEN, screen) }
-            }
     }
 }

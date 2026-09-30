@@ -35,6 +35,11 @@
     <string name="reboot_now">Restart</string>
     <string name="reboot_later">Later</string>
     <string name="integrity_category">Integrity spoofing</string>
+    <string name="integrity_fix_title">Play Integrity Fix</string>
+    <string name="integrity_fix_summary">Keybox renewal, TEE simulator and the Play Integrity fingerprint in one switch; takes effect after a restart</string>
+    <string name="integrity_note_title">Note</string>
+    <string name="integrity_galaxy_note_title">Play Store identity (Galaxy)</string>
+    <string name="integrity_galaxy_note_summary">The Galaxy identity spoofs a different device; keep it off while Play Integrity Fix is on, otherwise device integrity fails.</string>
     <string name="specter_title">Specter (keybox renewal)</string>
     <string name="specter_summary">Fetches keyboxes from the Specter catalog, checks the Google revocation list and applies updates live; switching takes effect after a restart</string>
     <string name="keybox_title">Keybox (TEE simulator)</string>
@@ -45,6 +50,7 @@
     <string name="pif_summary">GMS build fingerprint and the DroidGuard key block; takes effect after a restart</string>
     <string name="integrity_reboot_message">This change is applied after the tablet restarts. Restart now?</string>
     <string name="integrity_reboot_off_message">Turning this off takes effect after the tablet restarts, and data that belongs to the feature (keyboxes, target list, fingerprint data) is removed then. Restart now?</string>
+    <string name="integrity_reboot_galaxy_off_message">Play Integrity Fix is turned on and the conflicting Play Store Galaxy identity is turned off. Both apply after the tablet restarts. Restart now?</string>
     <string name="integrity_status_category">Status</string>
     <string name="keybox_state_title">Keybox</string>
     <string name="keybox_state_installed">Installed</string>
