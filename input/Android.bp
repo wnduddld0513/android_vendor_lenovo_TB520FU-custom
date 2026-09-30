@@ -15,10 +15,11 @@ java_library {
 
     srcs: ["src/**/*.java"],
     libs: ["//device/lenovo/TB520FU:tb520fu-input"],
-    // Certificate forging of the keybox service (X.509 building and ASN.1
-    // editing); the classes are also on the system_server boot classpath, the
-    // static copy just makes the jar self contained.
-    static_libs: ["bouncycastle-repackaged-unbundled"],
+    // The certificate forging uses com.android.internal.org.bouncycastle. The
+    // classes come with the platform (platform_apis compiles against
+    // framework-minus-apex, which bundles the repackaged bouncycastle), so no
+    // dependency on external/bouncycastle is needed - its modules are not
+    // visible to device/vendor modules anyway.
     platform_apis: true,
     system_ext_specific: true,
     installable: true,
