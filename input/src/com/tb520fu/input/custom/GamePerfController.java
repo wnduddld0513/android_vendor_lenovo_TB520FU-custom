@@ -301,11 +301,13 @@ public final class GamePerfController {
 
     /** Highest available frequency at or nearest to {@code percent} of the cluster max. */
     private int percentMax(int policy, int percent, int fallbackMax) {
+        // 100 % is no limit at all (the boost clock, e.g. 3.3 GHz on the X4,
+        // is not in scaling_available_frequencies).
+        if (percent >= 100 || fallbackMax <= 0) return fallbackMax;
         int[] available = readInts(CPUFREQ + POLICIES[policy] + "/scaling_available_frequencies");
-        int top = 0;
-        for (int f : available) top = Math.max(top, f);
-        if (top <= 0) top = fallbackMax;
-        if (top <= 0) return fallbackMax;
+        // Percent of the real maximum (fallbackMax, the boot-time scaling_max_freq),
+        // not of the highest listed frequency.
+        int top = fallbackMax;
         int target = (int) ((long) top * percent / 100);
         int best = 0;
         for (int f : available) {
