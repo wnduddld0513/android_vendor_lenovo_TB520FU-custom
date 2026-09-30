@@ -25,6 +25,8 @@
     <string name="game_custom_gpu_summary" formatted="false">사용자 설정 %1$d%%</string>
     <string name="game_custom_level">사용자 설정</string>
     <string name="play_store_category">Play 스토어</string>
+    <string name="installer_spoof_title">Play 스토어에서 설치한 것으로 표시</string>
+    <string name="installer_spoof_summary">다른 앱에 설치자를 Play 스토어로 알려줍니다. Play 설치가 필요한 앱(예: Notein)이 작동합니다. 즉시 적용되며 기본값은 꺼짐입니다</string>
     <string name="reboot_title">재시작 필요</string>
     <string name="reboot_now">다시 시작</string>
     <string name="reboot_later">나중에</string>

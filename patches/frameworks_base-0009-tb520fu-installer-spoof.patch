@@ -1,0 +1,48 @@
+diff --git a/core/java/android/app/ApplicationPackageManager.java b/core/java/android/app/ApplicationPackageManager.java
+index a6182a5cc..313f3cfde 100644
+--- a/core/java/android/app/ApplicationPackageManager.java
++++ b/core/java/android/app/ApplicationPackageManager.java
+@@ -2717,10 +2717,27 @@ public class ApplicationPackageManager extends PackageManager {
+         }
+     }
+ 
++    /* TB520FU: hide the real installer of sideloaded apps and report the Play
++     * Store instead, so that apps which require a Play install source (for
++     * example Notein) keep working. The switch is read live, so the "Custom
++     * features" toggle applies without a restart, and it defaults to off.
++     */
++    private static final String TB520FU_PLAY_STORE_PACKAGE = "com.android.vending";
++    private static final String TB520FU_INSTALLER_SPOOF_PROP =
++            "persist.sys.tb520fu.spoof_installer";
++
++    private static boolean tb520fuSpoofInstaller() {
++        return SystemProperties.getBoolean(TB520FU_INSTALLER_SPOOF_PROP, false);
++    }
++
+     @Override
+     public String getInstallerPackageName(String packageName) {
+         try {
+-            return mPM.getInstallerPackageName(packageName);
++            final String installer = mPM.getInstallerPackageName(packageName);
++            if (tb520fuSpoofInstaller() && !TB520FU_PLAY_STORE_PACKAGE.equals(installer)) {
++                return TB520FU_PLAY_STORE_PACKAGE;
++            }
++            return installer;
+         } catch (RemoteException e) {
+             throw e.rethrowFromSystemServer();
+         }
+@@ -2738,6 +2755,14 @@ public class ApplicationPackageManager extends PackageManager {
+         if (installSourceInfo == null) {
+             throw new NameNotFoundException(packageName);
+         }
++        if (tb520fuSpoofInstaller() && !TB520FU_PLAY_STORE_PACKAGE.equals(
++                installSourceInfo.getInstallingPackageName())) {
++            return new InstallSourceInfo(installSourceInfo.getInitiatingPackageName(),
++                    installSourceInfo.getInitiatingPackageSigningInfo(),
++                    installSourceInfo.getOriginatingPackageName(), TB520FU_PLAY_STORE_PACKAGE,
++                    installSourceInfo.getUpdateOwnerPackageName(),
++                    installSourceInfo.getPackageSource());
++        }
+         return installSourceInfo;
+     }
+ 

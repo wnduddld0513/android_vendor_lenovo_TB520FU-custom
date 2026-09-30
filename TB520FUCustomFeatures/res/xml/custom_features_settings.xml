@@ -28,6 +28,12 @@
             android:summary="@string/integrity_fix_summary"
             android:persistent="false" />
 
+        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+            android:key="installer_spoof"
+            android:title="@string/installer_spoof_title"
+            android:summary="@string/installer_spoof_summary"
+            android:persistent="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -78,6 +78,13 @@ apply_patch frameworks/base \
 #       on a version-less URL (the reason fetched_pif stayed empty).
 apply_patch frameworks/base \
     "$PATCHES/frameworks_base-0008-tb520fu-pif-url.patch"
+# 0009: Hide the real installer of sideloaded apps from other apps and report
+#       the Play Store instead, so apps that require a Play install source
+#       (for example Notein) keep working. PackageManager hands out
+#       com.android.vending while persist.sys.tb520fu.spoof_installer is 1;
+#       off by default, the framework reads the property live.
+apply_patch frameworks/base \
+    "$PATCHES/frameworks_base-0009-tb520fu-installer-spoof.patch"
 
 # packages/apps/Updater
 # 0001: SourceForge folder as update server (RSS feed of the OTA folder):

@@ -12,10 +12,10 @@ import androidx.preference.Preference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 
 /**
- * Main screen of the "Custom features" app: game performance and the Play
- * Integrity Fix switch. The features live here (not in
- * TB520FUParts) because they are optional customizations; the device tree
- * builds without them.
+ * Main screen of the "Custom features" app: game performance, the Play
+ * Integrity Fix switch and the installer spoof switch. The features live here
+ * (not in TB520FUParts) because they are optional customizations; the device
+ * tree builds without them.
  */
 class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
 
@@ -27,6 +27,7 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
         gamePerfPref = findPreference(KEY_GAME_PERF)!!
 
         bindIntegrity()
+        bindInstallerSpoof()
     }
 
     override fun onResume() {
@@ -70,6 +71,20 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
         }
     }
 
+    /**
+     * Reports the Play Store as the installer of sideloaded apps (framework
+     * side, see InstallerSpoof); the property is read live, so no restart
+     * prompt.
+     */
+    private fun bindInstallerSpoof() {
+        val pref = findPreference<TitleClickSwitchPreference>(KEY_INSTALLER_SPOOF)!!
+        pref.isChecked = InstallerSpoof.enabled
+        pref.setOnPreferenceChangeListener { _, value ->
+            InstallerSpoof.enabled = value as Boolean
+            true
+        }
+    }
+
     private fun openScreen() {
         parentFragmentManager.beginTransaction()
             .replace(
@@ -95,5 +110,6 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
     private companion object {
         const val KEY_GAME_PERF = "game_perf"
         const val KEY_INTEGRITY_FIX = "integrity_fix"
+        const val KEY_INSTALLER_SPOOF = "installer_spoof"
     }
 }

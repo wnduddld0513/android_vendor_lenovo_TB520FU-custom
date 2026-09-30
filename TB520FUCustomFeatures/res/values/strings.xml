@@ -28,6 +28,8 @@
     <string name="game_custom_gpu_summary" formatted="false">Custom %1$d%%</string>
     <string name="game_custom_level">Custom</string>
     <string name="play_store_category">Play Store</string>
+    <string name="installer_spoof_title">Report the Play Store as the installer</string>
+    <string name="installer_spoof_summary">Other apps see the Play Store as the installer of sideloaded apps, so apps that require a Play install keep working (for example Notein). Applies immediately; off by default</string>
     <string name="reboot_title">Restart required</string>
     <string name="reboot_now">Restart</string>
     <string name="reboot_later">Later</string>
