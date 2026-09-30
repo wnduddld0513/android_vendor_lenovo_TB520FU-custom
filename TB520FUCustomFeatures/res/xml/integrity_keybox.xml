@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/keybox_title">
+
+    <PreferenceCategory android:key="keybox_status"
+        android:title="@string/integrity_status_category">
+
+        <Preference android:key="keybox_state"
+            android:title="@string/keybox_state_title"
+            android:selectable="false" />
+
+        <Preference android:key="keybox_source"
+            android:title="@string/keybox_source_title"
+            android:selectable="false" />
+
+        <Preference android:key="keybox_serial"
+            android:title="@string/keybox_serial_title"
+            android:selectable="false" />
+
+        <Preference android:key="keybox_pool"
+            android:title="@string/keybox_pool_title"
+            android:selectable="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:key="keybox_actions"
+        android:title="@string/keybox_title">
+
+        <SwitchPreferenceCompat
+            android:key="keybox_auto"
+            android:title="@string/keybox_auto_title"
+            android:summary="@string/keybox_auto_summary"
+            android:persistent="false" />
+
+        <SwitchPreferenceCompat
+            android:key="keybox_auto_rotate"
+            android:title="@string/keybox_auto_rotate_title"
+            android:summary="@string/keybox_auto_rotate_summary"
+            android:persistent="false" />
+
+        <Preference
+            android:key="keybox_renew"
+            android:title="@string/keybox_renew_title"
+            android:summary="@string/keybox_renew_summary" />
+
+        <Preference
+            android:key="keybox_clear"
+            android:title="@string/keybox_clear_title"
+            android:summary="@string/keybox_clear_summary" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -30,4 +30,28 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="integrity"
+        android:title="@string/integrity_category">
+
+        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+            android:key="integrity_specter"
+            android:title="@string/specter_title"
+            android:summary="@string/specter_summary"
+            android:persistent="false" />
+
+        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+            android:key="integrity_teesim"
+            android:title="@string/teesim_title"
+            android:summary="@string/teesim_summary"
+            android:persistent="false" />
+
+        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+            android:key="integrity_pif"
+            android:title="@string/pif_title"
+            android:summary="@string/pif_summary"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

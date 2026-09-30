@@ -1,0 +1,562 @@
+diff --git a/core/java/com/android/internal/util/custom/KeyProviderManager.java b/core/java/com/android/internal/util/custom/KeyProviderManager.java
+index 35364b4..e4896d5 100644
+--- a/core/java/com/android/internal/util/custom/KeyProviderManager.java
++++ b/core/java/com/android/internal/util/custom/KeyProviderManager.java
+@@ -34,6 +34,13 @@ public final class KeyProviderManager {
+     }
+ 
+     public static boolean isKeyboxAvailable() {
++        if (KeyboxServiceClient.isPresent()) {
++            // TB520FU: the keybox lives in system_server (the tb520fu.keybox
++            // service) and only counts while the TEE simulator switch is on.
++            // The AOSPA provider below stays as the fallback for builds
++            // without the customizations repository.
++            return KeyboxServiceClient.hasKeybox();
++        }
+         return getProvider().hasKeybox();
+     }
+ 
+diff --git a/core/java/com/android/internal/util/custom/KeyboxImitationHooks.java b/core/java/com/android/internal/util/custom/KeyboxImitationHooks.java
+index 135d2e6..4ee081d 100644
+--- a/core/java/com/android/internal/util/custom/KeyboxImitationHooks.java
++++ b/core/java/com/android/internal/util/custom/KeyboxImitationHooks.java
+@@ -1,177 +1,55 @@
+ /*
+- * SPDX-FileCopyrightText: 2024 Paranoid Android
+- * SPDX-FileCopyrightText: 2025 Neoteric OS
++ * Copyright (C) 2024 Paranoid Android
++ * Copyright (C) 2025 Neoteric OS
++ * Copyright (C) 2026 The LineageOS Project
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ package com.android.internal.util.custom;
+ 
+-import android.hardware.security.keymint.Algorithm;
+-import android.hardware.security.keymint.KeyParameter;
+-import android.hardware.security.keymint.KeyParameterValue;
+-import android.hardware.security.keymint.Tag;
+-import android.os.Binder;
+-import android.system.keystore2.Authorization;
+-import android.system.keystore2.IKeystoreSecurityLevel;
+ import android.system.keystore2.KeyDescriptor;
+ import android.system.keystore2.KeyEntryResponse;
+ import android.system.keystore2.KeyMetadata;
+-import android.util.Log;
+-
+-import com.android.internal.util.custom.KeyboxChainGenerator.KeyGenParameters;
+-
+-import java.security.cert.Certificate;
+-import java.util.ArrayList;
+-import java.util.Collection;
+-import java.util.LinkedList;
+-import java.util.List;
+ 
+ /**
++ * TB520FU: keybox attestation hooks called by the framework keystore client
++ * (KeyStore2 and KeyStoreSecurityLevel, which run in every app process).
++ *
++ * The stock AOSPA implementation forged a software key at generation time and
++ * kept the keybox in Settings.Secure, readable by every app, and it never
++ * intercepted the signing operations of the forged key. This version follows
++ * the PATCH mode of TrickyStore / TEESimulator-RS instead: the real TEE key is
++ * generated as usual and only its certificate chain is rewritten, by the
++ * keybox service in system_server (KeyboxServiceClient), which keeps the
++ * keybox private keys out of apps. Key operations keep working because the
++ * leaf public key is preserved.
++ *
++ * Without the customizations repository the service is absent and every call
++ * here returns null, leaving the stock behaviour untouched.
++ *
+  * @hide
+  */
+-public class KeyboxImitationHooks {
+-
++public final class KeyboxImitationHooks {
+     private static final String TAG = "KeyboxImitationHooks";
+-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+-    private static boolean mSuccess = false;
+-
+-    public static KeyEntryResponse onGetKeyEntry(KeyDescriptor descriptor) {
+-        if (!KeyProviderManager.isKeyboxAvailable()) {
+-            return null;
+-        }
+-
+-        if (!mSuccess) {
+-            return null;
+-        }
+-
+-        KeyEntryResponse spoofed = KeyboxUtils.retrieve(Binder.getCallingUid(), descriptor.alias);
+-        if (spoofed != null) {
+-            dlog("Key entry spoofed");
+-            return spoofed;
+-        }
+-
+-        return null;
+-    }
+-
+-    public static KeyMetadata generateKey(IKeystoreSecurityLevel level, KeyDescriptor descriptor, Collection<KeyParameter> args) {
+-        if (!KeyProviderManager.isKeyboxAvailable()) {
+-            return null;
+-        }
+-
+-        KeyGenParameters params = new KeyGenParameters(args.toArray(new KeyParameter[args.size()]));
+-
+-        if (params.attestationChallenge == null) {
+-            return null;
+-        }
+-
+-        if (params.algorithm != Algorithm.EC && params.algorithm != Algorithm.RSA) {
+-            Log.w(TAG, "Unsupported algorithm: " + params.algorithm);
+-            return null;
+-        }
+ 
+-        int uid = Binder.getCallingUid();
+-        try {
+-            List<Certificate> chain = KeyboxChainGenerator.generateCertChain(uid, descriptor, params);
+-            if (chain == null || chain.isEmpty()) {
+-                return null;
+-            }
+-            KeyEntryResponse response = buildResponse(level, chain, params, descriptor);
+-            if (response == null) {
+-                return null;
+-            }
+-            KeyboxUtils.append(uid, descriptor.alias, response);
+-            mSuccess = true;
+-            return response.metadata;
+-        } catch (Exception e) {
+-            Log.e(TAG, "Failed to generate key", e);
+-            return null;
+-        }
+-    }
+-
+-    private static KeyEntryResponse buildResponse(
+-            IKeystoreSecurityLevel level,
+-            List<Certificate> chain,
+-            KeyGenParameters params,
+-            KeyDescriptor descriptor
+-    ) {
+-        try {
+-            KeyEntryResponse response = new KeyEntryResponse();
+-            KeyMetadata metadata = new KeyMetadata();
+-            metadata.keySecurityLevel = params.securityLevel;
+-
+-            KeyboxUtils.putCertificateChain(metadata, chain.toArray(new Certificate[chain.size()]));
+-
+-            KeyDescriptor d = new KeyDescriptor();
+-            d.domain = descriptor.domain;
+-            d.nspace = descriptor.nspace;
+-            metadata.key = d;
+-
+-            List<Authorization> authorizations = new ArrayList<>();
+-            Authorization a;
+-
+-            for (Integer i : params.purpose) {
+-                a = new Authorization();
+-                a.keyParameter = new KeyParameter();
+-                a.keyParameter.tag = Tag.PURPOSE;
+-                a.keyParameter.value = KeyParameterValue.keyPurpose(i);
+-                a.securityLevel = params.securityLevel;
+-                authorizations.add(a);
+-            }
+-
+-            for (Integer i : params.digest) {
+-                a = new Authorization();
+-                a.keyParameter = new KeyParameter();
+-                a.keyParameter.tag = Tag.DIGEST;
+-                a.keyParameter.value = KeyParameterValue.digest(i);
+-                a.securityLevel = params.securityLevel;
+-                authorizations.add(a);
+-            }
++    private KeyboxImitationHooks() {}
+ 
+-            a = new Authorization();
+-            a.keyParameter = new KeyParameter();
+-            a.keyParameter.tag = Tag.ALGORITHM;
+-            a.keyParameter.value = KeyParameterValue.algorithm(params.algorithm);
+-            a.securityLevel = params.securityLevel;
+-            authorizations.add(a);
+-
+-            a = new Authorization();
+-            a.keyParameter = new KeyParameter();
+-            a.keyParameter.tag = Tag.KEY_SIZE;
+-            a.keyParameter.value = KeyParameterValue.integer(params.keySize);
+-            a.securityLevel = params.securityLevel;
+-            authorizations.add(a);
+-
+-            a = new Authorization();
+-            a.keyParameter = new KeyParameter();
+-            a.keyParameter.tag = Tag.EC_CURVE;
+-            a.keyParameter.value = KeyParameterValue.ecCurve(params.ecCurve);
+-            a.securityLevel = params.securityLevel;
+-            authorizations.add(a);
+-
+-            a = new Authorization();
+-            a.keyParameter = new KeyParameter();
+-            a.keyParameter.tag = Tag.NO_AUTH_REQUIRED;
+-            a.keyParameter.value = KeyParameterValue.boolValue(true); // TODO: copy
+-            a.securityLevel = params.securityLevel;
+-            authorizations.add(a);
+-
+-            // TODO: ORIGIN, OS_VERSION, OS_PATCHLEVEL, VENDOR_PATCHLEVEL, BOOT_PATCHLEVEL,
+-            // CREATION_DATETIME, USER_ID
+-
+-            metadata.authorizations = authorizations.toArray(new Authorization[0]);
+-            response.metadata = metadata;
+-            response.iSecurityLevel = level;
+-            return response;
+-        } catch (Exception e) {
+-            Log.e(TAG, "Failed to build key entry response", e);
+-            return null;
+-        }
++    /**
++     * Cached patched entry for an alias we already patched, so repeated
++     * certificate lookups do not go through the service again. Null when the
++     * feature is off or the entry was not patched yet.
++     */
++    public static KeyEntryResponse onGetKeyEntry(KeyDescriptor descriptor) {
++        return KeyboxServiceClient.cachedEntry(descriptor);
+     }
+ 
+-    public static void setSuccessFlag(boolean flag) {
+-        mSuccess = flag;
++    /** Replaces the certificates of a real key entry; null when untouched. */
++    public static KeyEntryResponse onKeyEntryResponse(KeyDescriptor descriptor,
++            KeyEntryResponse response) {
++        return KeyboxServiceClient.patch(descriptor, response);
+     }
+ 
+-    private static void dlog(String msg) {
+-        if (DEBUG) Log.d(TAG, msg);
++    /** Replaces the certificates the generate call returned; null when untouched. */
++    public static KeyMetadata onGenerateKey(KeyDescriptor descriptor, KeyMetadata metadata) {
++        return KeyboxServiceClient.patchMetadata(descriptor, metadata);
+     }
+ }
+diff --git a/core/java/com/android/internal/util/custom/KeyboxServiceClient.java b/core/java/com/android/internal/util/custom/KeyboxServiceClient.java
+new file mode 100755
+index 0000000..4e46f42
+--- /dev/null
++++ b/core/java/com/android/internal/util/custom/KeyboxServiceClient.java
+@@ -0,0 +1,275 @@
++/*
++ * Copyright (C) 2026 The LineageOS Project
++ * SPDX-License-Identifier: Apache-2.0
++ */
++
++package com.android.internal.util.custom;
++
++import android.os.Binder;
++import android.os.IBinder;
++import android.os.Parcel;
++import android.os.ServiceManager;
++import android.os.SystemProperties;
++import android.system.keystore2.KeyDescriptor;
++import android.system.keystore2.KeyEntryResponse;
++import android.system.keystore2.KeyMetadata;
++import android.util.Log;
++
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.List;
++import java.util.Map;
++import java.util.concurrent.ConcurrentHashMap;
++
++/**
++ * TB520FU: client of the "tb520fu.keybox" service that
++ * tb520fu-input-custom.jar publishes from system_server (the TEESimulator-RS /
++ * TrickyStore port of the customizations repository).
++ *
++ * The framework keystore client runs in every app process, but the keybox
++ * private keys must not be: the service parses the keybox, rewrites the
++ * attestation certificates and returns only the chain. The patched entries are
++ * cached here per app until the service generation changes (a renewed keybox).
++ *
++ * Everything is inert unless sys.tb520fu.integrity_teesim is 1 (the boot
++ * snapshot of the "TEE simulator" switch in "Custom features"), and when the
++ * service is missing (a build without the customizations repository) nothing
++ * is called at all.
++ *
++ * @hide
++ */
++public final class KeyboxServiceClient {
++    private static final String TAG = "KeyboxServiceClient";
++    private static final String SERVICE = "tb520fu.keybox";
++    private static final String PROP_ENABLED = "sys.tb520fu.integrity_teesim";
++
++    private static final int TRANSACT_STATUS = 1;
++    private static final int TRANSACT_PATCH = 2;
++
++    private static final int RESULT_NONE = 0;
++    private static final int RESULT_PATCHED = 1;
++
++    private static final long STATUS_TTL_MS = 5000;
++    /** How long a "not targeted" verdict is remembered, to skip binder calls. */
++    private static final long DENY_TTL_MS = 60000;
++
++    private static final Map<String, Cached> sCache = new ConcurrentHashMap<>();
++    private static final Map<Integer, Long> sDenied = new ConcurrentHashMap<>();
++
++    private static volatile boolean sHasKeybox = false;
++    private static volatile long sGeneration = -1;
++    private static volatile long sStatusTime = -1;
++
++    private static final class Cached {
++        final long generation;
++        final KeyEntryResponse response;
++
++        Cached(long generation, KeyEntryResponse response) {
++            this.generation = generation;
++            this.response = response;
++        }
++    }
++
++    private static final class Patched {
++        final byte[] leaf;
++        final List<byte[]> chain;
++
++        Patched(byte[] leaf, List<byte[]> chain) {
++            this.leaf = leaf;
++            this.chain = chain;
++        }
++    }
++
++    private KeyboxServiceClient() {}
++
++    private static IBinder binder() {
++        try {
++            return ServiceManager.getService(SERVICE);
++        } catch (Throwable t) {
++            return null;
++        }
++    }
++
++    static boolean isPresent() {
++        return binder() != null;
++    }
++
++    static boolean isEnabled() {
++        return SystemProperties.getBoolean(PROP_ENABLED, false);
++    }
++
++    /** True while a keybox is installed and the service is enabled; cached briefly. */
++    static boolean hasKeybox() {
++        if (!isEnabled()) return false;
++        long now = System.currentTimeMillis();
++        if (sStatusTime >= 0 && now - sStatusTime < STATUS_TTL_MS) {
++            return sHasKeybox;
++        }
++        IBinder binder = binder();
++        if (binder == null) {
++            sHasKeybox = false;
++            sStatusTime = now;
++            return false;
++        }
++        Parcel data = Parcel.obtain();
++        Parcel reply = Parcel.obtain();
++        try {
++            if (!binder.transact(TRANSACT_STATUS, data, reply, 0)) {
++                sHasKeybox = false;
++                return false;
++            }
++            reply.setDataPosition(0);
++            reply.readInt(); // enabled
++            sHasKeybox = reply.readInt() != 0;
++            sGeneration = reply.readLong();
++        } catch (Throwable t) {
++            sHasKeybox = false;
++        } finally {
++            data.recycle();
++            reply.recycle();
++        }
++        sStatusTime = now;
++        return sHasKeybox;
++    }
++
++    /** Cached patched entry of a previous getKeyEntry call; null when absent/stale. */
++    static KeyEntryResponse cachedEntry(KeyDescriptor descriptor) {
++        if (!isEnabled() || descriptor == null || descriptor.alias == null) return null;
++        String key = key(descriptor);
++        Cached cached = sCache.get(key);
++        if (cached == null) return null;
++        hasKeybox(); // refresh the generation
++        if (cached.generation != sGeneration) {
++            sCache.remove(key);
++            return null;
++        }
++        return cached.response;
++    }
++
++    /**
++     * Replaces the certificates of a real key entry with keybox signed ones.
++     * Returns the same object (with the certificates swapped in) or null when
++     * nothing was patched.
++     */
++    static KeyEntryResponse patch(KeyDescriptor descriptor, KeyEntryResponse response) {
++        if (!isEnabled() || descriptor == null || descriptor.alias == null || response == null
++                || response.metadata == null || response.metadata.certificate == null) {
++            return null;
++        }
++        // The usual case is no keybox at all; hasKeybox() is cached, so this
++        // keeps the binder call out of the certificate chain path entirely.
++        if (!hasKeybox()) return null;
++        Patched patched = patchRemote(descriptor, response.metadata.certificate,
++                splitChain(response.metadata.certificateChain));
++        if (patched == null) return null;
++        response.metadata.certificate = patched.leaf;
++        response.metadata.certificateChain = joinChain(patched.chain);
++        hasKeybox();
++        sCache.put(key(descriptor), new Cached(sGeneration, response));
++        return response;
++    }
++
++    /** Same as {@link #patch} for the metadata a key generation returns. */
++    static KeyMetadata patchMetadata(KeyDescriptor descriptor, KeyMetadata metadata) {
++        if (!isEnabled() || descriptor == null || metadata == null
++                || metadata.certificate == null) {
++            return null;
++        }
++        if (!hasKeybox()) return null;
++        Patched patched = patchRemote(descriptor, metadata.certificate,
++                splitChain(metadata.certificateChain));
++        if (patched == null) return null;
++        metadata.certificate = patched.leaf;
++        metadata.certificateChain = joinChain(patched.chain);
++        return metadata;
++    }
++
++    private static Patched patchRemote(KeyDescriptor descriptor, byte[] leaf, List<byte[]> chain) {
++        IBinder binder = binder();
++        if (binder == null) return null;
++        int uid = Binder.getCallingUid();
++        Long deniedUntil = sDenied.get(uid);
++        if (deniedUntil != null && deniedUntil > System.currentTimeMillis()) return null;
++
++        Parcel data = Parcel.obtain();
++        Parcel reply = Parcel.obtain();
++        try {
++            data.writeInt(uid);
++            data.writeString(descriptor.alias);
++            data.writeByteArray(leaf);
++            data.writeInt(chain.size());
++            for (byte[] cert : chain) data.writeByteArray(cert);
++
++            if (!binder.transact(TRANSACT_PATCH, data, reply, 0)) return null;
++            reply.setDataPosition(0);
++            if (reply.readInt() != RESULT_PATCHED) {
++                // Not a target: remember the verdict for a while, the chain
++                // read path can be frequent.
++                sDenied.put(uid, System.currentTimeMillis() + DENY_TTL_MS);
++                return null;
++            }
++            byte[] patchedLeaf = reply.createByteArray();
++            int count = reply.readInt();
++            if (patchedLeaf == null || count < 1) return null;
++            List<byte[]> patchedChain = new ArrayList<>(count);
++            for (int i = 0; i < count; i++) {
++                byte[] cert = reply.createByteArray();
++                if (cert != null) patchedChain.add(cert);
++            }
++            sDenied.remove(uid);
++            return new Patched(patchedLeaf, patchedChain);
++        } catch (Throwable t) {
++            Log.w(TAG, "attestation patch failed", t);
++            return null;
++        } finally {
++            data.recycle();
++            reply.recycle();
++        }
++    }
++
++    private static String key(KeyDescriptor descriptor) {
++        return Binder.getCallingUid() + ":" + descriptor.alias;
++    }
++
++    /** The keystore chain is a concatenation of DER certificates. */
++    private static List<byte[]> splitChain(byte[] bytes) {
++        List<byte[]> out = new ArrayList<>();
++        if (bytes == null) return out;
++        int pos = 0;
++        while (pos + 2 <= bytes.length && (bytes[pos] & 0xff) == 0x30) {
++            int lengthByte = bytes[pos + 1] & 0xff;
++            int length;
++            int header;
++            if ((lengthByte & 0x80) == 0) {
++                length = lengthByte;
++                header = 2;
++            } else {
++                int lengthBytes = lengthByte & 0x7f;
++                if (lengthBytes < 1 || lengthBytes > 4 || pos + 2 + lengthBytes > bytes.length) {
++                    break;
++                }
++                length = 0;
++                for (int i = 0; i < lengthBytes; i++) {
++                    length = (length << 8) | (bytes[pos + 2 + i] & 0xff);
++                }
++                header = 2 + lengthBytes;
++            }
++            if (length <= 0 || pos + header + length > bytes.length) break;
++            out.add(Arrays.copyOfRange(bytes, pos, pos + header + length));
++            pos += header + length;
++        }
++        return out;
++    }
++
++    private static byte[] joinChain(List<byte[]> chain) {
++        int total = 0;
++        for (byte[] cert : chain) total += cert.length;
++        byte[] joined = new byte[total];
++        int pos = 0;
++        for (byte[] cert : chain) {
++            System.arraycopy(cert, 0, joined, pos, cert.length);
++            pos += cert.length;
++        }
++        return joined;
++    }
++}
+diff --git a/keystore/java/android/security/KeyStore2.java b/keystore/java/android/security/KeyStore2.java
+index bd2f53b..819edbb 100644
+--- a/keystore/java/android/security/KeyStore2.java
++++ b/keystore/java/android/security/KeyStore2.java
+@@ -290,7 +290,11 @@ public class KeyStore2 {
+             return response;
+         }
+ 
+-        return handleRemoteExceptionWithRetry((service) -> service.getKeyEntry(descriptor));
++        response = handleRemoteExceptionWithRetry((service) -> service.getKeyEntry(descriptor));
++
++        // TB520FU: rewrite the attestation chain with the keybox, if enabled.
++        KeyEntryResponse patched = KeyboxImitationHooks.onKeyEntryResponse(descriptor, response);
++        return patched != null ? patched : response;
+     }
+ 
+     /**
+diff --git a/keystore/java/android/security/KeyStoreSecurityLevel.java b/keystore/java/android/security/KeyStoreSecurityLevel.java
+index f9bf6fd..5e70de3 100644
+--- a/keystore/java/android/security/KeyStoreSecurityLevel.java
++++ b/keystore/java/android/security/KeyStoreSecurityLevel.java
+@@ -168,18 +168,15 @@ public class KeyStoreSecurityLevel {
+             throws KeyStoreException {
+         StrictMode.noteDiskWrite();
+ 
+-        KeyboxImitationHooks.setSuccessFlag(false);
+-        if (attestationKey == null) {
+-            KeyMetadata metadata = KeyboxImitationHooks.generateKey(mSecurityLevel,
+-                    descriptor, args);
+-            if (metadata != null) {
+-                return metadata;
+-            }
+-        }
+-
+-        return retryBusyException(() -> mSecurityLevel.generateKey(
++        KeyMetadata metadata = retryBusyException(() -> mSecurityLevel.generateKey(
+                 descriptor, attestationKey, args.toArray(new KeyParameter[args.size()]),
+                 flags, entropy));
++
++        // TB520FU: the real key is generated as usual, the returned
++        // certificate chain is rewritten with the keybox when enabled (the
++        // leaf keeps the real public key, so operations keep working).
++        KeyMetadata patched = KeyboxImitationHooks.onGenerateKey(descriptor, metadata);
++        return patched != null ? patched : metadata;
+     }
+ 
+     /**

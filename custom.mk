@@ -24,6 +24,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     init.tb520fu.spoof.rc
 
+# Play Integrity spoofing ("Custom features" > Integrity): snapshots
+# persist.sys.tb520fu.integrity_* into sys.tb520fu.integrity_* at boot.
+# Needs patches/frameworks_base-0006 (keybox attestation) and -0007 (PIF
+# toggle); the keybox service lives in tb520fu-input-custom.jar.
+PRODUCT_PACKAGES += \
+    init.tb520fu.integrity.rc
+
 # Lenovo Notes (stock ZuiNotes from the global ROM). Shipped as a plain file
 # at /system_ext/etc/preinstall/ZuiNotes.apk, not as a system app:
 # tb520fu-input-custom.jar installs it into /data once after the first boot

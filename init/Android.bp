@@ -14,3 +14,12 @@ prebuilt_etc {
     src: "init.tb520fu.spoof.rc",
     sub_dir: "init",
 }
+
+// Optional Play Integrity spoofing: snapshot the "Custom features" > Integrity
+// switches (persist.sys.tb520fu.integrity_*) at boot. The framework hooks and
+// the tb520fu-input-custom keybox service read only the sys.* snapshots.
+prebuilt_etc {
+    name: "init.tb520fu.integrity.rc",
+    src: "init.tb520fu.integrity.rc",
+    sub_dir: "init",
+}

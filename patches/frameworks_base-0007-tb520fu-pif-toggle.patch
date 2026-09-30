@@ -1,0 +1,51 @@
+diff --git a/core/java/com/android/internal/util/PropImitationHooks.java b/core/java/com/android/internal/util/PropImitationHooks.java
+index efc2bc4..5d5edc2 100644
+--- a/core/java/com/android/internal/util/PropImitationHooks.java
++++ b/core/java/com/android/internal/util/PropImitationHooks.java
+@@ -263,6 +263,15 @@ public class PropImitationHooks {
+             return;
+         }
+ 
++        // TB520FU: the GMS/Finsky spoof and its data fetching are the "Play
++        // Integrity fingerprint" feature of "Custom features"; sys.* is the
++        // boot snapshot of the switch (init.tb520fu.integrity.rc), so the
++        // change only takes effect after a restart.
++        if (!SystemProperties.getBoolean("sys.tb520fu.integrity_pif", false)) {
++            dlog("GMS prop imitation is disabled by the Custom features app");
++            return;
++        }
++
+         // Guard: isolated processes cannot access content providers (Settings.*).
+         if (android.os.Process.isIsolated()) {
+             dlog("Skipping setPlayIntegrityProps in isolated process");
+@@ -397,6 +406,13 @@ public class PropImitationHooks {
+             return;
+         }
+ 
++        // TB520FU: the DroidGuard block belongs to the "Play Integrity
++        // fingerprint" feature; off means the app sees the real chain.
++        if (!SystemProperties.getBoolean("sys.tb520fu.integrity_pif", false)) {
++            dlog("Key attestation blocking is disabled by the Custom features app");
++            return;
++        }
++
+         // If a keybox is found, don't block key attestation
+         if (KeyProviderManager.isKeyboxAvailable()) {
+             dlog("Key attestation blocking is disabled because a keybox is defined to spoof");
+diff --git a/services/core/java/com/android/server/custom/AttestationService.java b/services/core/java/com/android/server/custom/AttestationService.java
+index d3b1af4..4f86774 100644
+--- a/services/core/java/com/android/server/custom/AttestationService.java
++++ b/services/core/java/com/android/server/custom/AttestationService.java
+@@ -64,7 +64,11 @@ public final class AttestationService extends SystemService {
+ 
+     @Override
+     public void onBootPhase(int phase) {
+-        if (!sDisableGmsProps && CustomUtils.isPackageInstalled(mContext, "com.google.android.gms")
++        // TB520FU: the fetch belongs to the "Play Integrity fingerprint"
++        // feature of "Custom features"; with it off no data is downloaded.
++        if (!sDisableGmsProps
++                && SystemProperties.getBoolean("sys.tb520fu.integrity_pif", false)
++                && CustomUtils.isPackageInstalled(mContext, "com.google.android.gms")
+                 && phase == PHASE_BOOT_COMPLETED) {
+             Log.i(TAG, "Scheduling the service");
+             mScheduler.scheduleAtFixedRate(

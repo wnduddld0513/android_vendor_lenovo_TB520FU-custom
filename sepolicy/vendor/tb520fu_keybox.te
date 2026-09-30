@@ -1,0 +1,5 @@
+# tb520fu-input-custom.jar publishes tb520fu.keybox from system_server. The
+# framework keystore client (in app processes) calls it to replace attestation
+# certificate chains with keybox signed ones; the keybox private keys stay in
+# system_server. app_api_service makes the service findable from apps.
+type tb520fu_keybox_service, app_api_service, system_server_service, service_manager_type;

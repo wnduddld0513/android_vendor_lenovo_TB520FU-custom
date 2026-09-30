@@ -65,6 +65,21 @@ mkdir -p "$STATE"
 #       Play Integrity behaviour.
 apply_patch frameworks/base \
     "$PATCHES/frameworks_base-0005-tb520fu-galaxy-device-spoof.patch"
+# 0006: Key attestation spoofing ("Custom features" > Integrity, the
+#       TEESimulator-RS / TrickyStore port). The keystore client in the app
+#       processes asks the system_server service tb520fu.keybox (published by
+#       tb520fu-input-custom.jar) to re-sign real TEE attestation chains with
+#       the installed keybox; the private keys stay in system_server. Inert
+#       unless sys.tb520fu.integrity_teesim is 1.
+apply_patch frameworks/base \
+    "$PATCHES/frameworks_base-0006-tb520fu-keybox-attestation.patch"
+# 0007: GMS fingerprint spoofing toggle ("Custom features" > Integrity, the
+#       PlayIntegrityFix port). Gates the stock PixelOS PropImitationHooks
+#       GMS/Finsky props, the DroidGuard key attestation block and the
+#       AttestationService data fetch on sys.tb520fu.integrity_pif, the boot
+#       snapshot of the switch.
+apply_patch frameworks/base \
+    "$PATCHES/frameworks_base-0007-tb520fu-pif-toggle.patch"
 
 # packages/apps/Updater
 # 0001: SourceForge folder as update server (RSS feed of the OTA folder):

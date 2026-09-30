@@ -10,6 +10,7 @@ import android.os.Handler;
 
 import com.tb520fu.input.InputExtension;
 import com.tb520fu.input.Safe;
+import com.tb520fu.input.custom.keybox.KeyboxSpoofService;
 
 /**
  * Entry point of the optional customizations jar
@@ -22,11 +23,17 @@ public final class CustomInput implements InputExtension {
 
     private GamePerfController mGamePerf;
     private NotesPreinstall mNotes;
+    private Context mContext;
 
     @Override
     public void init(Context context, Handler handler) {
+        mContext = context.getApplicationContext();
         mGamePerf = new GamePerfController(context, handler);
         mNotes = new NotesPreinstall(context, handler);
+        // Key attestation spoofing service ("Custom features" > Integrity);
+        // it is inert until sys.tb520fu.integrity_teesim is 1.
+        Safe.run("keybox spoof service",
+                () -> KeyboxSpoofService.publish(context, handler)).run();
     }
 
     @Override
@@ -35,6 +42,10 @@ public final class CustomInput implements InputExtension {
         // Installs Lenovo Notes from /system_ext/etc/preinstall once after the
         // first boot; a no-op on every later boot and after the user removes it.
         Safe.run("notes preinstall", mNotes::start).run();
+        // Removes the fingerprint data of the disabled Play Integrity feature
+        // (needs the settings provider, so it waits for the boot to finish).
+        Safe.run("integrity cleanup",
+                () -> KeyboxSpoofService.cleanupPifIfDisabled(mContext)).run();
     }
 
     @Override
