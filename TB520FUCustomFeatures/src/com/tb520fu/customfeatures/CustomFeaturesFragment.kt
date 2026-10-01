@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.os.PowerManager
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 
 /**
@@ -16,6 +17,10 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment
  * Integrity Fix switch and the installer spoof switch. The features live here
  * (not in TB520FUParts) because they are optional customizations; the device
  * tree builds without them.
+ *
+ * The switches only switch their feature on and off; the management screens
+ * are opened from separate rows (the same pattern as the Lenovo features
+ * app), so a tap can never toggle a feature by accident while navigating.
  */
 class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
 
@@ -27,6 +32,7 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
         gamePerfPref = findPreference(KEY_GAME_PERF)!!
 
         bindIntegrity()
+        bindIntegrityEntry()
         bindInstallerSpoof()
     }
 
@@ -45,13 +51,12 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
     /**
      * The single "Play Integrity Fix" switch arms the whole stack (keybox
      * renewal, TEE simulator, PIF); it is applied at boot (see Integrity) and
-     * on by default on a fresh install. A tap on the title opens the
-     * management screen instead of toggling.
+     * on by default on a fresh install. The switch only toggles the feature;
+     * [bindIntegrityEntry] opens the management screen.
      */
     private fun bindIntegrity() {
-        val pref = findPreference<TitleClickSwitchPreference>(KEY_INTEGRITY_FIX)!!
+        val pref = findPreference<SwitchPreferenceCompat>(KEY_INTEGRITY_FIX)!!
         pref.isChecked = Integrity.fixEnabled()
-        pref.onTitleClick = { openScreen() }
         pref.setOnPreferenceChangeListener { _, value ->
             val enabled = value as Boolean
             Integrity.setFix(enabled)
@@ -71,13 +76,21 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
         }
     }
 
+    /** Separate row that opens the Play Integrity management screen. */
+    private fun bindIntegrityEntry() {
+        findPreference<Preference>(KEY_INTEGRITY_SETTINGS)!!.setOnPreferenceClickListener {
+            openScreen()
+            true
+        }
+    }
+
     /**
      * Reports the Play Store as the installer of sideloaded apps (framework
      * side, see InstallerSpoof); the property is read live, so no restart
      * prompt.
      */
     private fun bindInstallerSpoof() {
-        val pref = findPreference<TitleClickSwitchPreference>(KEY_INSTALLER_SPOOF)!!
+        val pref = findPreference<SwitchPreferenceCompat>(KEY_INSTALLER_SPOOF)!!
         pref.isChecked = InstallerSpoof.enabled
         pref.setOnPreferenceChangeListener { _, value ->
             InstallerSpoof.enabled = value as Boolean
@@ -110,6 +123,7 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
     private companion object {
         const val KEY_GAME_PERF = "game_perf"
         const val KEY_INTEGRITY_FIX = "integrity_fix"
+        const val KEY_INTEGRITY_SETTINGS = "integrity_settings"
         const val KEY_INSTALLER_SPOOF = "installer_spoof"
     }
 }

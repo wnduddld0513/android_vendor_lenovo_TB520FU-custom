@@ -32,6 +32,8 @@
     <string name="reboot_later">나중에</string>
     <string name="integrity_category">무결성 위장</string>
     <string name="integrity_fix_summary">키박스 자동 갱신, TEE 시뮬레이터, Play Integrity 지문을 한 스위치로 켭니다. 다시 시작한 뒤 적용됩니다</string>
+    <string name="integrity_settings_title">Play Integrity Fix 설정</string>
+    <string name="integrity_settings_summary">키박스 상태·갱신, TEE 시뮬레이터 대상, Play Integrity 지문</string>
     <string name="specter_title">Specter (키박스 자동 갱신)</string>
     <string name="specter_summary">Specter 카탈로그에서 키박스를 받아 폐기 여부를 확인하고 즉시 적용합니다. 스위치는 다시 시작한 뒤 적용됩니다</string>
     <string name="keybox_title">키박스 (TEE 시뮬레이터)</string>

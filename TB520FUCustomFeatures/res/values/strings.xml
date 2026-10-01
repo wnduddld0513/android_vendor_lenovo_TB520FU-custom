@@ -36,6 +36,8 @@
     <string name="integrity_category">Integrity spoofing</string>
     <string name="integrity_fix_title">Play Integrity Fix</string>
     <string name="integrity_fix_summary">Keybox renewal, TEE simulator and the Play Integrity fingerprint in one switch; takes effect after a restart</string>
+    <string name="integrity_settings_title">Play Integrity Fix settings</string>
+    <string name="integrity_settings_summary">Keybox status and renewal, TEE simulator targets, Play Integrity fingerprint</string>
     <string name="specter_title">Specter (keybox renewal)</string>
     <string name="specter_summary">Fetches keyboxes from the Specter catalog, checks the Google revocation list and applies updates live; switching takes effect after a restart</string>
     <string name="keybox_title">Keybox (TEE simulator)</string>

@@ -22,13 +22,18 @@
         android:key="play_store"
         android:title="@string/play_store_category">
 
-        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+        <SwitchPreferenceCompat
             android:key="integrity_fix"
             android:title="@string/integrity_fix_title"
             android:summary="@string/integrity_fix_summary"
             android:persistent="false" />
 
-        <com.tb520fu.customfeatures.TitleClickSwitchPreference
+        <Preference
+            android:key="integrity_settings"
+            android:title="@string/integrity_settings_title"
+            android:summary="@string/integrity_settings_summary" />
+
+        <SwitchPreferenceCompat
             android:key="installer_spoof"
             android:title="@string/installer_spoof_title"
             android:summary="@string/installer_spoof_summary"
