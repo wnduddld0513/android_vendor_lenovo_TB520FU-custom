@@ -26,6 +26,7 @@ import com.android.internal.org.bouncycastle.cert.X509CertificateHolder;
 import com.android.internal.org.bouncycastle.cert.X509v3CertificateBuilder;
 import com.android.internal.org.bouncycastle.jce.provider.BouncyCastleProvider;
 import com.android.internal.org.bouncycastle.operator.ContentSigner;
+import com.android.internal.org.bouncycastle.operator.OperatorCreationException;
 import com.android.internal.org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import java.security.SecureRandom;
@@ -186,14 +187,25 @@ final class AttestationPatcher {
     }
 
     private static ContentSigner signer(boolean ec, KeyboxManager.Keybox keybox) throws Exception {
-        if (!sBcReady) {
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-            Security.addProvider(new BouncyCastleProvider());
-            sBcReady = true;
-        }
         String algorithm = ec ? "SHA256withECDSA" : "SHA256withRSA";
-        return new JcaContentSignerBuilder(algorithm)
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build(keybox.key);
+        // The repackaged BouncyCastle provider in this build does not carry the
+        // ECDSA/RSA signature implementations (see commit that dropped the
+        // external bouncycastle dependency), so pinning it made the attestation
+        // patch fail with "no such algorithm: SHA256WITHECDSA for provider BC"
+        // and left DEVICE/STRONG integrity broken. The platform default
+        // provider (Conscrypt) signs both algorithms; BouncyCastle stays only
+        // as a fallback for builds where it can handle the algorithm.
+        try {
+            return new JcaContentSignerBuilder(algorithm).build(keybox.key);
+        } catch (OperatorCreationException e) {
+            if (!sBcReady) {
+                Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+                Security.addProvider(new BouncyCastleProvider());
+                sBcReady = true;
+            }
+            return new JcaContentSignerBuilder(algorithm)
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                    .build(keybox.key);
+        }
     }
 }
