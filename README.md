@@ -18,7 +18,7 @@ Contents:
 | `init/` | `init.tb520fu.integrity.rc`, the boot-time Play Integrity Fix snapshot |
 | `sepolicy/vendor/` | the cpufreq/kgsl rules of the game performance controller |
 | `patches/` | PixelOS source patches, applied by `patches/apply.sh` |
-| `integrity/` | Play Integrity Fix (optional) (Specter keybox renewal, TEESimulator-RS keybox service in `input/`, PIF toggle in patches 0006/0007); see `integrity/README.md` |
+| `integrity/` | Play Integrity Fix (optional) |
 | `tools/custom_strings.py` | generates the app's `res/values*/strings.xml` |
 | `tools/ota_json.py` | writes the updater description of a build |
 
