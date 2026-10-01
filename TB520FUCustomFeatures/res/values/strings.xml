@@ -78,7 +78,7 @@
     <string name="teesim_keybox_title">Keybox</string>
     <string name="teesim_targets_category">Target apps</string>
     <string name="teesim_targets_all">All apps</string>
-    <string name="teesim_targets_all_summary">Spoofs the attestation of every app; off by default, only the list below is patched</string>
+    <string name="teesim_targets_all_summary">Spoofs the attestation of every app; turn it off to patch only the list below</string>
     <string name="teesim_target_add">Add app</string>
     <string name="teesim_target_remove">Tap to remove</string>
     <string name="teesim_target_remove_confirm">Remove this app from the target list?</string>

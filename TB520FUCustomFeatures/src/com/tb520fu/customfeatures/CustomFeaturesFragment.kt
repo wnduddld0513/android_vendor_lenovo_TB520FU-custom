@@ -62,12 +62,17 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
             Integrity.setFix(enabled)
             if (enabled) {
                 IntegrityJobService.schedule(requireContext())
-                // Default the target options on when the fix is switched on:
-                // add every installed third party app now and keep adding the
-                // new ones, so the attestation targets stay in step with the
-                // installed apps.
+                // Turning the fix on also switches the whole feature on:
+                // automatic renewal and automatic replacement are enabled and
+                // the attestation targets are set up here - every app is
+                // patched, new apps keep being added and every installed third
+                // party app is added right away.
+                val appContext = requireContext().applicationContext
                 Thread {
+                    Integrity.setAutoRotate(appContext, true)
                     IntegrityServiceClient.setAutoTarget(true)
+                    val current = IntegrityServiceClient.status()
+                    IntegrityServiceClient.setTargets(current?.targets ?: emptyList(), true)
                     IntegrityServiceClient.addAllInstalled()
                 }.start()
             } else {

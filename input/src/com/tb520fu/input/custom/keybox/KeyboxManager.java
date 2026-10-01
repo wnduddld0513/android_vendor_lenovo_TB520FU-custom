@@ -546,6 +546,9 @@ final class KeyboxManager {
                         sTargets.add(line);
                     }
                 } else {
+                    // Fresh install: the fix ships with every app patched; the
+                    // list below is only used when "all apps" is switched off.
+                    sAllTargets = true;
                     sTargets.addAll(Arrays.asList(DEFAULT_TARGETS));
                 }
             } catch (Throwable t) {

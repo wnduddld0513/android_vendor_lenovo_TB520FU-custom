@@ -74,7 +74,7 @@
     <string name="teesim_keybox_title">키박스</string>
     <string name="teesim_targets_category">대상 앱</string>
     <string name="teesim_targets_all">모든 앱</string>
-    <string name="teesim_targets_all_summary">모든 앱의 키 증명을 위장합니다. 기본은 꺼짐이며 아래 목록만 적용됩니다</string>
+    <string name="teesim_targets_all_summary">모든 앱의 증명을 위장합니다. 끄면 아래 목록만 패치합니다</string>
     <string name="teesim_target_add">앱 추가</string>
     <string name="teesim_target_remove">눌러서 삭제</string>
     <string name="teesim_target_remove_confirm">이 앱을 대상 목록에서 삭제할까요?</string>
