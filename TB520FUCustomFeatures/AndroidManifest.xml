@@ -54,5 +54,14 @@
             </intent-filter>
         </receiver>
 
+        <!-- Faster revocation/softban detection while the tablet is in use -->
+        <receiver
+            android:name=".IntegrityUnlockReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

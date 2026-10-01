@@ -45,7 +45,15 @@ class IntegrityJobService : JobService() {
 
     companion object {
         private const val JOB_ID = 52074
-        private const val PERIOD_MS = 6 * 60 * 60 * 1000L
+
+        /**
+         * JobScheduler's shortest periodic period: Google's revocation list is
+         * checked at least every fifteen minutes while the feature is on, so a
+         * freshly revoked keybox is swapped quickly instead of after hours.
+         * (A softban can only be seen once Specter's community catalog has it,
+         * which is what really limits how fast it can be noticed.)
+         */
+        private const val PERIOD_MS = 15 * 60 * 1000L
 
         fun schedule(context: Context) {
             val scheduler = context.getSystemService(JobScheduler::class.java) ?: return
