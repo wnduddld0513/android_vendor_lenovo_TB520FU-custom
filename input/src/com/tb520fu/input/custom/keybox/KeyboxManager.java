@@ -325,6 +325,14 @@ final class KeyboxManager {
             }
             //noinspection ResultOfMethodCallIgnored
             REVOKED_FILE.delete();
+            // Leave no directory behind either once everything is gone.
+            if (DIR.isDirectory()) {
+                String[] left = DIR.list();
+                if (left == null || left.length == 0) {
+                    //noinspection ResultOfMethodCallIgnored
+                    DIR.delete();
+                }
+            }
             sPoolCache = null;
         }
     }
