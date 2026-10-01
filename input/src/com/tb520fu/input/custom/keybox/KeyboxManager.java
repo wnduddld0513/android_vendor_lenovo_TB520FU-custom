@@ -5,6 +5,8 @@
 
 package com.tb520fu.input.custom.keybox;
 
+import android.os.SystemProperties;
+
 import android.util.Base64;
 import android.util.Log;
 import android.util.Xml;
@@ -446,8 +448,21 @@ final class KeyboxManager {
     static boolean isTargeted(String pkg) {
         loadTargets();
         synchronized (LOCK) {
-            return sAllTargets || sTargets.contains(pkg);
+            return isCoreTarget(pkg) || sAllTargets || sTargets.contains(pkg);
         }
+    }
+
+    /**
+     * The targets that must always be patched: Play services (DroidGuard runs
+     * in com.google.android.gms.unstable) and the Play Store. They are never
+     * dropped, so a target list that the UI writes back without them cannot
+     * silently break Play Integrity.
+     */
+    private static boolean isCoreTarget(String pkg) {
+        for (String core : DEFAULT_TARGETS) {
+            if (core.equals(pkg)) return true;
+        }
+        return false;
     }
 
     /** Bumped whenever the target list changes; consumers cache against it. */
@@ -466,6 +481,7 @@ final class KeyboxManager {
                     if (p != null && !p.isEmpty()) sTargets.add(p);
                 }
             }
+            sTargets.addAll(Arrays.asList(DEFAULT_TARGETS));
             sTargetsVersion++;
             saveTargets();
         }
@@ -483,7 +499,7 @@ final class KeyboxManager {
     }
 
     static void removeTarget(String pkg) {
-        if (pkg == null) return;
+        if (pkg == null || isCoreTarget(pkg)) return;
         synchronized (LOCK) {
             loadTargets();
             if (sTargets.remove(pkg)) {
@@ -528,6 +544,8 @@ final class KeyboxManager {
                 Log.w(TAG, "targets load failed", t);
                 sTargets.addAll(Arrays.asList(DEFAULT_TARGETS));
             }
+            // The core targets always stay, whatever the file holds.
+            sTargets.addAll(Arrays.asList(DEFAULT_TARGETS));
         }
     }
 
@@ -541,6 +559,12 @@ final class KeyboxManager {
                     } catch (Throwable t) {
                         sAutoTarget = false;
                     }
+                } else {
+                    // Fresh install: keep the attestation targets in step with
+                    // the installed apps by default, as long as the TEE
+                    // simulator is on (unset switch means on).
+                    sAutoTarget = SystemProperties.getBoolean(
+                            "sys.tb520fu.integrity_teesim", false);
                 }
             }
             return sAutoTarget;

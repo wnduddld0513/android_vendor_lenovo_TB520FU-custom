@@ -83,7 +83,7 @@ public final class KeyboxSpoofService {
      *    the revocation records too).
      */
     private static void cleanupIfDisabled(Context context) {
-        if (!SystemProperties.getBoolean(PROP_TEESIM, false)) {
+        if (!SystemProperties.getBoolean(PROP_TEESIM, true)) {
             KeyboxManager.wipeTargets();
             if (!SystemProperties.getBoolean("sys.tb520fu.integrity_specter", false)) {
                 KeyboxManager.clearAll();
@@ -111,7 +111,9 @@ public final class KeyboxSpoofService {
     }
 
     private static boolean enabled() {
-        return SystemProperties.getBoolean(PROP_TEESIM, false);
+        // Unset means on: init.tb520fu.integrity.rc snapshots the switch with a
+        // default of 1, and only an explicit 0 turns the TEE simulator off.
+        return SystemProperties.getBoolean(PROP_TEESIM, true);
     }
 
     private static int patchLevel() {

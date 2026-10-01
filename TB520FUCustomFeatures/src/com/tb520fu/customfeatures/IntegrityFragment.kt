@@ -28,6 +28,15 @@ import org.json.JSONObject
  */
 class IntegrityFragment : SettingsBasePreferenceFragment() {
 
+    private companion object {
+        /**
+         * The UI must never stay on "renewing"/"fetching" forever: when the
+         * worker has not answered by then (a hanging DNS lookup, a stuck
+         * socket), the row is reset and the failure is shown.
+         */
+        const val WATCHDOG_MS = 120_000L
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.integrity_fix, rootKey)
         bindKeybox()
@@ -140,6 +149,16 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         val autoRotate = Integrity.autoRotate(requireContext())
         renew.isEnabled = false
         renew.summary = getString(R.string.keybox_renewing)
+        val done = java.util.concurrent.atomic.AtomicBoolean(false)
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val watchdog = Runnable {
+            if (!done.compareAndSet(false, true) || !isAdded) return@Runnable
+            renew.isEnabled = true
+            renew.summary = getString(R.string.keybox_renew_failed)
+            Toast.makeText(requireContext(), R.string.keybox_renew_failed, Toast.LENGTH_LONG).show()
+            refresh()
+        }
+        handler.postDelayed(watchdog, WATCHDOG_MS)
         Thread {
             val result = try {
                 KeyboxRenewal.renew(force = true, autoRotate = autoRotate)
@@ -147,6 +166,8 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
                 KeyboxRenewal.Result.Failed(t.message ?: t.javaClass.simpleName)
             }
             activity?.runOnUiThread {
+                if (!done.compareAndSet(false, true)) return@runOnUiThread
+                handler.removeCallbacks(watchdog)
                 if (!isAdded) return@runOnUiThread
                 renew.isEnabled = true
                 var message = when (result) {
@@ -326,6 +347,16 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         val refresh = findPreference<Preference>("pif_refresh") ?: return
         refresh.isEnabled = false
         refresh.summary = getString(R.string.pif_refreshing)
+        val done = java.util.concurrent.atomic.AtomicBoolean(false)
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val watchdog = Runnable {
+            if (!done.compareAndSet(false, true) || !isAdded) return@Runnable
+            refresh.isEnabled = true
+            refresh.summary = getString(R.string.pif_refresh_failed)
+            Toast.makeText(requireContext(), R.string.pif_refresh_failed, Toast.LENGTH_LONG).show()
+            refresh()
+        }
+        handler.postDelayed(watchdog, WATCHDOG_MS)
         Thread {
             val json = try {
                 KeyboxRenewal.fetchPif()
@@ -334,6 +365,8 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
             }
             val installed = json != null && IntegrityServiceClient.putPif(json)
             activity?.runOnUiThread {
+                if (!done.compareAndSet(false, true)) return@runOnUiThread
+                handler.removeCallbacks(watchdog)
                 if (!isAdded) return@runOnUiThread
                 refresh.isEnabled = true
                 Toast.makeText(

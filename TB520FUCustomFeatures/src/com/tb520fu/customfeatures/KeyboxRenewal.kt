@@ -5,6 +5,7 @@
 
 package com.tb520fu.customfeatures
 
+import android.os.SystemClock
 import android.os.SystemProperties
 import android.util.Base64
 import org.json.JSONObject
@@ -44,6 +45,14 @@ object KeyboxRenewal {
         "https://android.googleapis.com/attestation/status?encrypted=0"
     private const val TIMEOUT_MS = 15000
 
+    /**
+     * Upper bounds so a slow catalog cannot keep the renewal (and the
+     * "renewing" row) busy forever: at most [MAX_CANDIDATES] downloads and
+     * [RENEW_BUDGET_MS] in total.
+     */
+    private const val MAX_CANDIDATES = 6
+    private const val RENEW_BUDGET_MS = 60_000L
+
     /** Spares kept besides the active keybox (Specter's single fallback pair). */
     private const val POOL_TARGET = 1
 
@@ -75,22 +84,28 @@ object KeyboxRenewal {
      *                   revoked (the "replace automatically" switch)
      */
     fun renew(force: Boolean, autoRotate: Boolean): Result {
+        val deadline = SystemClock.elapsedRealtime() + RENEW_BUDGET_MS
         val revocations = httpGet(REVOCATION_URL)
+        val catalog = httpGet(CATALOG_URL)
+        val candidates = candidates(catalog)
 
-        // Record what Google revoked among the keyboxes we already hold.
-        var activeRevoked = false
+        // Record what Google revoked, and what the catalog marks as revoked or
+        // softbanned (Google rejects those silently, without ever listing them),
+        // among the keyboxes we already hold.
+        var activeBanned = false
         for (entry in IntegrityServiceClient.pool()) {
             val serial = entry.serial
-            if (!serial.isNullOrEmpty() && isRevoked(revocations, serial)) {
+            if (serial.isNullOrEmpty()) continue
+            if (isRevoked(revocations, serial) || catalogBanned(catalog, serial)) {
                 IntegrityServiceClient.markRevoked(serial)
-                if (entry.active) activeRevoked = true
+                if (entry.active) activeBanned = true
             }
         }
 
         val before = IntegrityServiceClient.status() ?: return Result.Failed("service unavailable")
-        val needsActive = !before.installed || activeRevoked
+        val needsActive = !before.installed || activeBanned
         if (force || (autoRotate && needsActive)) {
-            val installed = downloadAndInstall(revocations)
+            val installed = downloadAndInstall(candidates, revocations, catalog, deadline)
                 ?: if (autoRotate && needsActive) IntegrityServiceClient.rotate() else null
             if (installed == null && !before.installed) {
                 return Result.Failed("no working keybox found")
@@ -99,8 +114,8 @@ object KeyboxRenewal {
 
         // Keep one spare ready, like Specter's fallback pair.
         val spareCount = IntegrityServiceClient.pool().count { !it.active }
-        if (spareCount < POOL_TARGET) {
-            downloadAndStore(revocations)
+        if (spareCount < POOL_TARGET && SystemClock.elapsedRealtime() < deadline) {
+            downloadAndStore(candidates, revocations, catalog, deadline)
         }
 
         val after = IntegrityServiceClient.status() ?: return Result.Failed("service unavailable")
@@ -133,25 +148,56 @@ object KeyboxRenewal {
         return httpGet(url)
     }
 
-    private fun candidates(): List<Pair<String, String>> {
-        val catalog = httpGet(CATALOG_URL) ?: return FALLBACK_KEYBOXES
-        val fromCatalog = catalogCandidates(catalog)
+    private fun candidates(catalog: String?): List<Pair<String, String>> {
+        val fromCatalog = if (catalog != null) catalogCandidates(catalog) else emptyList()
         return if (fromCatalog.isEmpty()) FALLBACK_KEYBOXES else fromCatalog
     }
 
-    private fun downloadAndInstall(revocations: String?): String? {
-        for ((source, version) in candidates().distinct()) {
-            val xml = downloadCandidate(source, version, revocations) ?: continue
+    /**
+     * True when the catalog marks the serial as revoked or softbanned. A
+     * softbanned keybox is not on Google's public revocation list but is
+     * rejected anyway, so it must be swapped out like a revoked one.
+     */
+    private fun catalogBanned(catalog: String?, serialHex: String): Boolean {
+        if (catalog.isNullOrEmpty()) return false
+        return try {
+            val entries = JSONObject(catalog).optJSONArray("entries") ?: return false
+            val trimmed = serialHex.trimStart('0')
+            val decimal = java.math.BigInteger(serialHex, 16).toString()
+            for (i in 0 until entries.length()) {
+                val entry = entries.optJSONObject(i) ?: continue
+                val serial = entry.optString("serial")
+                if (serial.isEmpty()) continue
+                if (!serial.equals(serialHex, ignoreCase = true)
+                    && !serial.equals(trimmed, ignoreCase = true)
+                    && serial != decimal) {
+                    continue
+                }
+                if (entry.optBoolean("revoked") || entry.optBoolean("softbanned")) return true
+            }
+            false
+        } catch (t: Throwable) {
+            false
+        }
+    }
+
+    private fun downloadAndInstall(candidates: List<Pair<String, String>>, revocations: String?,
+            catalog: String?, deadline: Long): String? {
+        for ((source, version) in candidates.distinct().take(MAX_CANDIDATES)) {
+            if (SystemClock.elapsedRealtime() > deadline) break
+            val xml = downloadCandidate(source, version, revocations, catalog) ?: continue
             val serial = IntegrityServiceClient.install(xml, source, version) ?: continue
             return serial
         }
         return null
     }
 
-    private fun downloadAndStore(revocations: String?): String? {
+    private fun downloadAndStore(candidates: List<Pair<String, String>>, revocations: String?,
+            catalog: String?, deadline: Long): String? {
         val active = IntegrityServiceClient.status()?.serial
-        for ((source, version) in candidates().distinct()) {
-            val xml = downloadCandidate(source, version, revocations) ?: continue
+        for ((source, version) in candidates.distinct().take(MAX_CANDIDATES)) {
+            if (SystemClock.elapsedRealtime() > deadline) break
+            val xml = downloadCandidate(source, version, revocations, catalog) ?: continue
             val serial = IntegrityServiceClient.store(xml, source, version) ?: continue
             if (serial == active) continue
             return serial
@@ -159,11 +205,12 @@ object KeyboxRenewal {
         return null
     }
 
-    private fun downloadCandidate(source: String, version: String, revocations: String?): String? {
+    private fun downloadCandidate(source: String, version: String, revocations: String?,
+            catalog: String?): String? {
         val blob = httpGet("$KEYBOX_BASE/$source/$version") ?: return null
         val xml = decodeKeyboxBlob(blob) ?: return null
         val serial = firstCertificateSerial(xml) ?: return null
-        if (isRevoked(revocations, serial)) {
+        if (isRevoked(revocations, serial) || catalogBanned(catalog, serial)) {
             IntegrityServiceClient.markRevoked(serial)
             return null
         }

@@ -62,6 +62,14 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
             Integrity.setFix(enabled)
             if (enabled) {
                 IntegrityJobService.schedule(requireContext())
+                // Default the target options on when the fix is switched on:
+                // add every installed third party app now and keep adding the
+                // new ones, so the attestation targets stay in step with the
+                // installed apps.
+                Thread {
+                    IntegrityServiceClient.setAutoTarget(true)
+                    IntegrityServiceClient.addAllInstalled()
+                }.start()
             } else {
                 IntegrityJobService.cancel(requireContext())
             }
