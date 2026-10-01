@@ -8,6 +8,8 @@ package com.tb520fu.customfeatures
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 
 /**
  * Extra, cheap check of Google's revocation list and Specter's catalog when
@@ -21,6 +23,7 @@ class IntegrityUnlockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_USER_PRESENT) return
         if (!Integrity.enabled(Integrity.SPECTER)) return
+        if (!hasNetwork(context)) return
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val now = System.currentTimeMillis()
         if (now - prefs.getLong(KEY_LAST, 0L) < THROTTLE_MS) return
@@ -35,6 +38,17 @@ class IntegrityUnlockReceiver : BroadcastReceiver() {
                 pending.finish()
             }
         }.start()
+    }
+
+    /**
+     * Nothing to do while offline: the periodic job waits for a network by
+     * itself and the next unlock checks again.
+     */
+    private fun hasNetwork(context: Context): Boolean {
+        val cm = context.getSystemService(ConnectivityManager::class.java) ?: return true
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private companion object {
