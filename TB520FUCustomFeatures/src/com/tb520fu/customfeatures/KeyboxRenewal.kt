@@ -53,6 +53,11 @@ object KeyboxRenewal {
     private const val MAX_CANDIDATES = 6
     private const val RENEW_BUDGET_MS = 60_000L
 
+    /** A second, independent keybox source. Checked right after "working". */
+    private const val EXTRA_SOURCE = "extra"
+    private const val EXTRA_KEYBOX_URL =
+            "https://raw.githubusercontent.com/MeowDump/MeowDump/refs/heads/main/Megatron"
+
     /** Spares kept besides the active keybox (Specter's single fallback pair). */
     private const val POOL_TARGET = 1
 
@@ -150,8 +155,12 @@ object KeyboxRenewal {
 
     private fun candidates(catalog: String?): List<Pair<String, String>> {
         val fromCatalog = if (catalog != null) catalogCandidates(catalog) else emptyList()
-        // The built-in fallback is tried last, whatever the catalog said.
-        return (fromCatalog + FALLBACK_KEYBOXES).distinct()
+        // Order: the catalog's working keybox, the extra source, the rest of
+        // the catalog and finally the built-in fallback.
+        val extra = listOf(EXTRA_SOURCE to "latest")
+        val head = fromCatalog.take(1)
+        val tail = fromCatalog.drop(1)
+        return (head + extra + tail + FALLBACK_KEYBOXES).distinct()
     }
 
     /**
@@ -208,8 +217,14 @@ object KeyboxRenewal {
 
     private fun downloadCandidate(source: String, version: String, revocations: String?,
             catalog: String?): String? {
-        val blob = httpGet("$KEYBOX_BASE/$source/$version") ?: return null
-        val xml = decodeKeyboxBlob(blob) ?: return null
+        val fromExtra = source == EXTRA_SOURCE
+        val blob = if (fromExtra) {
+            httpGet(EXTRA_KEYBOX_URL)
+        } else {
+            httpGet("$KEYBOX_BASE/$source/$version")
+        } ?: return null
+        val xml = if (fromExtra) decodeExtraBlob(blob) else decodeKeyboxBlob(blob) ?: return null
+        if (xml == null) return null
         val serial = firstCertificateSerial(xml) ?: return null
         if (isRevoked(revocations, serial) || catalogBanned(catalog, serial)) {
             IntegrityServiceClient.markRevoked(serial)
@@ -260,6 +275,49 @@ object KeyboxRenewal {
             return emptyList()
         }
         return candidates
+    }
+
+    /**
+     * Decodes the extra source's file into the keybox XML (it ships through
+     * several encoding layers).
+     */
+    private fun decodeExtraBlob(blob: String): String? {
+        return try {
+            var bytes = blob.toByteArray(Charsets.UTF_8)
+            for (i in 0 until 10) {
+                val next = try {
+                    Base64.decode(bytes, Base64.DEFAULT)
+                } catch (t: Throwable) {
+                    break
+                }
+                if (next.isEmpty()) break
+                bytes = next
+            }
+            val hex = String(bytes, Charsets.US_ASCII).replace("\\s".toRegex(), "")
+            if (hex.isEmpty() || hex.length % 2 != 0) return null
+            val raw = ByteArray(hex.length / 2)
+            for (i in raw.indices) {
+                val hi = Character.digit(hex[i * 2], 16)
+                val lo = Character.digit(hex[i * 2 + 1], 16)
+                if (hi < 0 || lo < 0) return null
+                raw[i] = ((hi shl 4) or lo).toByte()
+            }
+            val text = String(raw, Charsets.UTF_8)
+            val rotated = StringBuilder(text.length)
+            for (c in text) {
+                rotated.append(
+                    when (c) {
+                        in 'a'..'z' -> 'a' + (c - 'a' + 13) % 26
+                        in 'A'..'Z' -> 'A' + (c - 'A' + 13) % 26
+                        else -> c
+                    }
+                )
+            }
+            val xml = rotated.toString()
+            if (xml.contains("<Key") || xml.contains("<AndroidAttestation")) xml else null
+        } catch (t: Throwable) {
+            null
+        }
     }
 
     /**

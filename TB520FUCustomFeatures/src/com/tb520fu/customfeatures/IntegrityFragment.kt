@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
@@ -42,6 +43,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         bindKeybox()
         bindTeesim()
         bindPif()
+        bindCooldowns()
     }
 
     override fun onResume() {
@@ -80,6 +82,22 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
+            true
+        }
+    }
+
+    /** The two automatic check cooldowns, both thirty minutes by default. */
+    private fun bindCooldowns() {
+        val period = findPreference<ListPreference>("check_period") ?: return
+        val unlock = findPreference<ListPreference>("unlock_cooldown") ?: return
+        period.value = CheckCooldown.periodMinutes(requireContext()).toString()
+        period.setOnPreferenceChangeListener { _, value ->
+            CheckCooldown.setPeriodMinutes(requireContext(), (value as String).toInt())
+            true
+        }
+        unlock.value = CheckCooldown.unlockMinutes(requireContext()).toString()
+        unlock.setOnPreferenceChangeListener { _, value ->
+            CheckCooldown.setUnlockMinutes(requireContext(), (value as String).toInt())
             true
         }
     }

@@ -102,7 +102,7 @@ final class AutoTargetManager {
             }
         }
         for (String pkg : installedThird) {
-            if (kGMS(pkg) || KeyboxManager.isTargeted(pkg)) continue;
+            if (kGMS(pkg) || KeyboxManager.hasTarget(pkg)) continue;
             KeyboxManager.addTarget(pkg);
             changes++;
         }
@@ -125,7 +125,7 @@ final class AutoTargetManager {
             if (app == null) continue;
             if ((app.flags & (ApplicationInfo.FLAG_SYSTEM
                     | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0) continue;
-            if (kGMS(info.packageName) || KeyboxManager.isTargeted(info.packageName)) continue;
+            if (kGMS(info.packageName) || KeyboxManager.hasTarget(info.packageName)) continue;
             KeyboxManager.addTarget(info.packageName);
             added++;
         }

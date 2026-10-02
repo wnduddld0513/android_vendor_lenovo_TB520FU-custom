@@ -23,11 +23,11 @@ class IntegrityUnlockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_USER_PRESENT) return
         if (!Integrity.enabled(Integrity.SPECTER)) return
-        if (!hasNetwork(context)) return
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val now = System.currentTimeMillis()
-        if (now - prefs.getLong(KEY_LAST, 0L) < THROTTLE_MS) return
-        prefs.edit().putLong(KEY_LAST, now).apply()
+        // Every unlock restarts the shared countdown; a check only runs when
+        // the cooldown had already elapsed.
+        val due = CheckCooldown.due(context, CheckCooldown.unlockMinutes(context))
+        CheckCooldown.restart(context)
+        if (!due || !hasNetwork(context)) return
         val pending = goAsync()
         Thread {
             try {
@@ -35,6 +35,7 @@ class IntegrityUnlockReceiver : BroadcastReceiver() {
             } catch (t: Throwable) {
                 // The next trigger tries again.
             } finally {
+                CheckCooldown.restart(context)
                 pending.finish()
             }
         }.start()
@@ -51,9 +52,4 @@ class IntegrityUnlockReceiver : BroadcastReceiver() {
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    private companion object {
-        const val PREFS = "integrity_unlock"
-        const val KEY_LAST = "last_check"
-        const val THROTTLE_MS = 10 * 60 * 1000L
-    }
 }

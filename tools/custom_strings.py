@@ -32,6 +32,7 @@ KEYS = [
  ('integrity_category', None),
  ('integrity_fix_title', None), ('integrity_fix_summary', None),
  ('integrity_settings_title', None), ('integrity_settings_summary', None),
+('cooldown_category', None), ('check_period_title', None), ('unlock_cooldown_title', None),
  ('specter_title', None), ('specter_summary', None),
  ('keybox_title', None), ('keybox_summary', None),
  ('teesim_title', None), ('teesim_summary', None),
@@ -67,7 +68,8 @@ KEYS = [
  ('pif_clear_title', None), ('pif_clear_summary', None),
  ('pif_clear_confirm', None), ('pif_cleared', None),
 ]
-ARRAYS = ['game_level_entries', 'game_cpu_level_summaries', 'game_gpu_level_summaries']
+ARRAYS = ['game_level_entries', 'game_cpu_level_summaries', 'game_gpu_level_summaries',
+          'cooldown_entries', 'cooldown_values']
 
 L = {}
 L['en'] = dict(
@@ -103,6 +105,9 @@ L['en'] = dict(
  integrity_fix_summary='Keybox renewal, TEE simulator and the Play Integrity fingerprint in one switch; takes effect after a restart',
  integrity_settings_title='Play Integrity Fix settings',
  integrity_settings_summary='Keybox status and renewal, TEE simulator targets, Play Integrity fingerprint',
+ cooldown_category='Automatic checks',
+ check_period_title='Check interval',
+ unlock_cooldown_title='Unlock cooldown',
  specter_title='Specter (keybox renewal)',
  specter_summary='Fetches keyboxes from the Specter catalog, checks the Google revocation list and applies updates live; switching takes effect after a restart',
  keybox_title='Keybox (TEE simulator)',
@@ -172,6 +177,9 @@ L['en'] = dict(
 
  game_level_entries=['Power saving', 'Balanced', 'Default'],
 
+ cooldown_entries=['15 minutes', '30 minutes', '1 hour', '2 hours', '3 hours', '4 hours', '5 hours', '6 hours'],
+ cooldown_values=['15', '30', '60', '120', '180', '240', '300', '360'],
+
  game_cpu_level_summaries=['Lower clocks for less heat and longer play time', 'Caps the single core and the other cores to about 80 % for steady long sessions', 'Stock clocks; thermal protection still applies', 'Set the single core and multi core limits yourself'],
 
  game_gpu_level_summaries=['Lower graphics clock for less heat', 'Caps the graphics clock to about 80 % for less heat in long sessions', 'Stock graphics clock', 'Set the graphics clock limit yourself'],
@@ -210,6 +218,9 @@ L['ko'] = dict(
  integrity_fix_summary='키박스 자동 갱신, TEE 시뮬레이터, Play Integrity 지문을 한 스위치로 켭니다. 다시 시작한 뒤 적용됩니다',
  integrity_settings_title='Play Integrity Fix 설정',
  integrity_settings_summary='키박스 상태·갱신, TEE 시뮬레이터 대상, Play Integrity 지문',
+ cooldown_category='자동 점검',
+ check_period_title='체크 주기',
+ unlock_cooldown_title='잠금 해제 쿨타임',
  specter_title='Specter (키박스 자동 갱신)',
  specter_summary='Specter 카탈로그에서 키박스를 받아 폐기 여부를 확인하고 즉시 적용합니다. 스위치는 다시 시작한 뒤 적용됩니다',
  keybox_title='키박스 (TEE 시뮬레이터)',
@@ -278,6 +289,9 @@ L['ko'] = dict(
  game_perf_summary='앱별 CPU·GPU 설정입니다. 설정은 해당 앱이 화면에 있을 때만 적용됩니다',
 
  game_level_entries=['절전', '균형', '기본값'],
+
+ cooldown_entries=['15분', '30분', '1시간', '2시간', '3시간', '4시간', '5시간', '6시간'],
+ cooldown_values=['15', '30', '60', '120', '180', '240', '300', '360'],
 
  game_cpu_level_summaries=['클럭을 낮춰 발열을 줄이고 플레이 시간을 늘립니다', '싱글 코어와 나머지 코어를 약 80%로 제한해 오래 플레이해도 안정적입니다', '순정 클럭을 사용합니다 (발열 보호는 유지)', '싱글·멀티 코어 제한을 직접 설정합니다'],
 

@@ -114,4 +114,26 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="integrity_auto_check"
+        android:title="@string/cooldown_category">
+
+        <ListPreference
+            android:key="check_period"
+            android:title="@string/check_period_title"
+            android:summary="%s"
+            android:entries="@array/cooldown_entries"
+            android:entryValues="@array/cooldown_values"
+            android:persistent="false" />
+
+        <ListPreference
+            android:key="unlock_cooldown"
+            android:title="@string/unlock_cooldown_title"
+            android:summary="%s"
+            android:entries="@array/cooldown_entries"
+            android:entryValues="@array/cooldown_values"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

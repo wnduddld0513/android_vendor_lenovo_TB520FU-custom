@@ -461,6 +461,20 @@ final class KeyboxManager {
     }
 
     /**
+     * True when the package is in the list itself, regardless of the "all
+     * apps" switch. Used when the list is maintained, so the entries stay
+     * visible (and survive turning "all apps" off) even while every app is
+     * patched.
+     */
+    static boolean hasTarget(String pkg) {
+        if (pkg == null) return false;
+        loadTargets();
+        synchronized (LOCK) {
+            return sTargets.contains(pkg);
+        }
+    }
+
+    /**
      * The targets that must always be patched: Play services (DroidGuard runs
      * in com.google.android.gms.unstable) and the Play Store. They are never
      * dropped, so a target list that the UI writes back without them cannot

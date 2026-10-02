@@ -34,6 +34,9 @@
     <string name="integrity_fix_summary">키박스 자동 갱신, TEE 시뮬레이터, Play Integrity 지문을 한 스위치로 켭니다. 다시 시작한 뒤 적용됩니다</string>
     <string name="integrity_settings_title">Play Integrity Fix 설정</string>
     <string name="integrity_settings_summary">키박스 상태·갱신, TEE 시뮬레이터 대상, Play Integrity 지문</string>
+    <string name="cooldown_category">자동 점검</string>
+    <string name="check_period_title">체크 주기</string>
+    <string name="unlock_cooldown_title">잠금 해제 쿨타임</string>
     <string name="specter_title">Specter (키박스 자동 갱신)</string>
     <string name="specter_summary">Specter 카탈로그에서 키박스를 받아 폐기 여부를 확인하고 즉시 적용합니다. 스위치는 다시 시작한 뒤 적용됩니다</string>
     <string name="keybox_title">키박스 (TEE 시뮬레이터)</string>
@@ -115,5 +118,25 @@
         <item>그래픽 클럭을 약 80%로 제한해 오래 플레이할 때 발열을 줄입니다</item>
         <item>순정 그래픽 클럭을 사용합니다</item>
         <item>GPU 클럭 제한을 직접 설정합니다</item>
+    </string-array>
+    <string-array name="cooldown_entries">
+        <item>15분</item>
+        <item>30분</item>
+        <item>1시간</item>
+        <item>2시간</item>
+        <item>3시간</item>
+        <item>4시간</item>
+        <item>5시간</item>
+        <item>6시간</item>
+    </string-array>
+    <string-array name="cooldown_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>240</item>
+        <item>300</item>
+        <item>360</item>
     </string-array>
 </resources>

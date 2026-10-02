@@ -38,6 +38,9 @@
     <string name="integrity_fix_summary">Keybox renewal, TEE simulator and the Play Integrity fingerprint in one switch; takes effect after a restart</string>
     <string name="integrity_settings_title">Play Integrity Fix settings</string>
     <string name="integrity_settings_summary">Keybox status and renewal, TEE simulator targets, Play Integrity fingerprint</string>
+    <string name="cooldown_category">Automatic checks</string>
+    <string name="check_period_title">Check interval</string>
+    <string name="unlock_cooldown_title">Unlock cooldown</string>
     <string name="specter_title">Specter (keybox renewal)</string>
     <string name="specter_summary">Fetches keyboxes from the Specter catalog, checks the Google revocation list and applies updates live; switching takes effect after a restart</string>
     <string name="keybox_title">Keybox (TEE simulator)</string>
@@ -119,5 +122,25 @@
         <item>Caps the graphics clock to about 80 % for less heat in long sessions</item>
         <item>Stock graphics clock</item>
         <item>Set the graphics clock limit yourself</item>
+    </string-array>
+    <string-array name="cooldown_entries">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>4 hours</item>
+        <item>5 hours</item>
+        <item>6 hours</item>
+    </string-array>
+    <string-array name="cooldown_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>240</item>
+        <item>300</item>
+        <item>360</item>
     </string-array>
 </resources>
