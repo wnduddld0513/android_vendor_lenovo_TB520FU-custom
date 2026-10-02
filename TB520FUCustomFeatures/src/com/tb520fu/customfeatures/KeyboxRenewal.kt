@@ -220,7 +220,9 @@ object KeyboxRenewal {
 
     /**
      * Candidates in priority order: the newest known working keybox, the
-     * working entries, then every entry the catalog does not mark as dead.
+     * working entries, then every entry the catalog does not mark as dead,
+     * and finally the newest upload per source. (Specter does not use the
+     * catalog's "autoOverride" tag, so neither do we.)
      * Revoked and softbanned entries are skipped right away - a softbanned
      * keybox is usually not on the revocation list but Google rejects it all
      * the same - so a burnt catalog falls through to the next source (and
@@ -238,9 +240,6 @@ object KeyboxRenewal {
             // The catalog's newest known working keybox comes first.
             json.optJSONObject("working")?.let { working ->
                 add(working.optString("source"), working.optString("version"))
-            }
-            json.optJSONObject("autoOverride")?.let { override ->
-                add(override.optString("source"), override.optString("version"))
             }
             for (key in arrayOf("workingEntries", "entries")) {
                 json.optJSONArray(key)?.let { entries ->
