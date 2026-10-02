@@ -235,8 +235,12 @@ object KeyboxRenewal {
         }
         try {
             val json = JSONObject(catalog)
+            // The catalog's newest known working keybox comes first.
             json.optJSONObject("working")?.let { working ->
                 add(working.optString("source"), working.optString("version"))
+            }
+            json.optJSONObject("autoOverride")?.let { override ->
+                add(override.optString("source"), override.optString("version"))
             }
             for (key in arrayOf("workingEntries", "entries")) {
                 json.optJSONArray(key)?.let { entries ->
@@ -245,6 +249,12 @@ object KeyboxRenewal {
                         if (entry.optBoolean("revoked") || entry.optBoolean("softbanned")) continue
                         add(entry.optString("source"), entry.optString("version"))
                     }
+                }
+            }
+            // The newest upload per source, in case the lists above went stale.
+            json.optJSONObject("latest")?.let { latest ->
+                for (source in latest.keys()) {
+                    add(source, latest.optString(source))
                 }
             }
         } catch (t: Throwable) {
