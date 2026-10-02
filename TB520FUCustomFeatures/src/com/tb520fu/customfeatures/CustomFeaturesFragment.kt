@@ -51,7 +51,7 @@ class CustomFeaturesFragment : SettingsBasePreferenceFragment() {
     /**
      * The single "Play Integrity Fix" switch arms the whole stack (keybox
      * renewal, TEE simulator, PIF); it is applied at boot (see Integrity) and
-     * on by default on a fresh install. The switch only toggles the feature;
+     * off by default on a fresh install. The switch only toggles the feature;
      * [bindIntegrityEntry] opens the management screen.
      */
     private fun bindIntegrity() {

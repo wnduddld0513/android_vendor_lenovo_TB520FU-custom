@@ -8,8 +8,8 @@ are involved.
 
 "Custom Tweaks" > "Play Store" > **Play Integrity Fix** arms the whole
 feature; the options and the status live on its own screen ("Play Integrity Fix
-settings"). An unset switch means on, so a fresh install and a factory reset
-start with it enabled; the app writes an explicit 0 or 1 once the switch is
+settings"). An unset switch means off, so a fresh install and a factory reset
+start with it disabled; the app writes an explicit 0 or 1 once the switch is
 used.
 
 The first change needs one restart (the app offers it); keybox and fingerprint

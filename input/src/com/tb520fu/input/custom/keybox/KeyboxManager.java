@@ -586,7 +586,7 @@ final class KeyboxManager {
                 } else {
                     // Fresh install: keep the attestation targets in step with
                     // the installed apps by default, as long as the TEE
-                    // simulator is on (unset switch means on).
+                    // simulator is on (unset switch means off).
                     sAutoTarget = SystemProperties.getBoolean(
                             "sys.tb520fu.integrity_teesim", false);
                 }

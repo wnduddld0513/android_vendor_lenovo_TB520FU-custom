@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
  * The switches are kept in persist properties; init.tb520fu.integrity.rc
  * copies them to sys.tb520fu.integrity_* on boot and only the snapshots are
  * read, so a change needs a restart. On a fresh install, and after a factory
- * reset, the properties are unset and the feature is on by default; the app
+ * reset, the properties are unset and the feature is off by default; the app
  * writes an explicit 0 or 1 as soon as the switch is used.
  *
  * After that first restart keybox and fingerprint data updates apply live,
@@ -37,8 +37,8 @@ object Integrity {
     /** Keybox auto swap on revocation; on by default, applied live. */
     const val AUTO_ROTATE = "tb520fu_integrity_auto_rotate"
 
-    /** Unset means the factory default: on. */
-    fun enabled(prop: String): Boolean = android.os.SystemProperties.getBoolean(prop, true)
+    /** Unset means the factory default: off. */
+    fun enabled(prop: String): Boolean = android.os.SystemProperties.getBoolean(prop, false)
 
     fun set(prop: String, value: Boolean) {
         android.os.SystemProperties.set(prop, if (value) "1" else "0")
