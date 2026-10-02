@@ -20,9 +20,9 @@ import org.json.JSONObject
  * Management screen of the "Play Integrity Fix" feature; one screen for the
  * whole stack, opened by tapping the title of the switch on the main screen:
  *
- *  - keybox   the Specter port: state, automatic renewal, renew now, delete
- *  - teesim   the TEESimulator-RS port: state and the per-app target list
- *  - pif      the PlayIntegrityFix port: fingerprint data state, refresh, clear
+ *  - keybox   state, automatic renewal, renew now, delete
+ *  - teesim   state and the per-app target list
+ *  - pif      pif.json state, refresh, clear
  *
  * The main switch only arms the features (a restart applies them); everything
  * on this screen acts live through the system_server keybox service.
@@ -59,7 +59,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
     }
 
     //
-    // Keybox (Specter port)
+    // Keybox
     //
 
     private fun bindKeybox() {
@@ -119,10 +119,10 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         }
 
         auto.setOnPreferenceChangeListener(null)
-        auto.isChecked = Integrity.enabled(Integrity.SPECTER)
+        auto.isChecked = Integrity.enabled(Integrity.KEYBOX)
         auto.setOnPreferenceChangeListener { _, value ->
             val enabled = value as Boolean
-            Integrity.set(Integrity.SPECTER, enabled)
+            Integrity.set(Integrity.KEYBOX, enabled)
             if (enabled) IntegrityJobService.schedule(requireContext())
             else IntegrityJobService.cancel(requireContext())
             Integrity.askReboot(
@@ -205,7 +205,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
     }
 
     //
-    // TEESimulator
+    // TEE Simulator
     //
 
     private fun bindTeesim() {

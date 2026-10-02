@@ -12,13 +12,12 @@ import android.provider.Settings
 import androidx.fragment.app.Fragment
 
 /**
- * Play Integrity Fix: the ROM port of the Specter, TEESimulator-RS and
- * PlayIntegrityFix stack. One master switch ("Play Integrity Fix" in
- * "Custom features") arms all three:
+ * Play Integrity Fix. One master switch ("Play Integrity Fix" in "Custom
+ * Tweaks") arms all three:
  *
- *  - [SPECTER] automatic keybox renewal from the Specter catalog
+ *  - [KEYBOX]  automatic keybox renewal from the keybox catalog
  *  - [TEESIM]  keybox attestation spoofing for the target apps
- *  - [PIF]     GMS fingerprint spoofing and the DroidGuard key block
+ *  - [PIF]     GMS fingerprint spoofing and the key block
  *
  * The switches are kept in persist properties; init.tb520fu.integrity.rc
  * copies them to sys.tb520fu.integrity_* on boot and only the snapshots are
@@ -31,7 +30,7 @@ import androidx.fragment.app.Fragment
  */
 object Integrity {
 
-    const val SPECTER = "persist.sys.tb520fu.integrity_specter"
+    const val KEYBOX = "persist.sys.tb520fu.integrity_keybox"
     const val TEESIM = "persist.sys.tb520fu.integrity_teesim"
     const val PIF = "persist.sys.tb520fu.integrity_pif"
 
@@ -46,10 +45,10 @@ object Integrity {
     }
 
     /** The master switch: on only when all three features are on. */
-    fun fixEnabled(): Boolean = enabled(SPECTER) && enabled(TEESIM) && enabled(PIF)
+    fun fixEnabled(): Boolean = enabled(KEYBOX) && enabled(TEESIM) && enabled(PIF)
 
     fun setFix(value: Boolean) {
-        set(SPECTER, value)
+        set(KEYBOX, value)
         set(TEESIM, value)
         set(PIF, value)
     }

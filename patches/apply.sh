@@ -57,7 +57,7 @@ mkdir -p "$STATE"
 : > "$NEW_LIST"
 
 # frameworks/base
-# 0006: Key attestation spoofing ("Custom features" > Integrity, the
+# 0006: Key attestation spoofing ("Custom Tweaks" > Play Store, the
 #       TEESimulator-RS / TrickyStore port). The keystore client in the app
 #       processes asks the system_server service tb520fu.keybox (published by
 #       tb520fu-input-custom.jar) to re-sign real TEE attestation chains with
@@ -65,7 +65,7 @@ mkdir -p "$STATE"
 #       unless sys.tb520fu.integrity_teesim is 1.
 apply_patch frameworks/base \
     "$PATCHES/frameworks_base-0006-tb520fu-keybox-attestation.patch"
-# 0007: GMS fingerprint spoofing toggle ("Custom features" > Integrity, the
+# 0007: GMS fingerprint spoofing toggle ("Custom Tweaks" > Play Store, the
 #       PlayIntegrityFix port). Gates the stock PixelOS PropImitationHooks
 #       GMS/Finsky props, the DroidGuard key attestation block and the
 #       AttestationService data fetch on sys.tb520fu.integrity_pif, the boot

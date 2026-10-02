@@ -9,7 +9,7 @@ Contents:
 
 | Path | What |
 |---|---|
-| `TB520FUCustomFeatures/` | "Custom features" app (Settings > System): game performance and the Play Integrity Fix switch |
+| `TB520FUCustomFeatures/` | "Custom Tweaks" app (Settings > System): game performance and the Play Integrity Fix switch |
 | `input/` | `tb520fu-input-custom.jar`, the game performance enforcement and the first-boot Lenovo Notes install loaded into system_server by `tb520fu-input` |
 | `ZuiNotes/` | Lenovo Notes (stock `ZuiNotes.apk` from the global ROM), installed as a user app on first boot (see below) |
 | `FeathersLiveWallpaper/` | Pixel "Feathers" Porcelain live wallpaper, the default wallpaper |

@@ -10,9 +10,9 @@ import android.os.ServiceManager
 
 /**
  * Binder client of the "tb520fu.keybox" service published by
- * tb520fu-input-custom.jar in system_server (the TEESimulator-RS / Specter
- * port). The app is the only admin user of the service; the attestation
- * patching path is used by the framework, not here.
+ * tb520fu-input-custom.jar in system_server. The app is the only admin user
+ * of the service; the attestation patching path is used by the framework,
+ * not here.
  */
 object IntegrityServiceClient {
 

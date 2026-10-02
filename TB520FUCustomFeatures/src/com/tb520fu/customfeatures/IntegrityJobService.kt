@@ -13,16 +13,15 @@ import android.content.ComponentName
 import android.content.Context
 
 /**
- * Automatic keybox renewal (the Specter port), only scheduled while the
- * Specter switch is on. It runs while the keybox feature is enabled, fetches
- * the catalog and installs a fresh keybox through the system_server service;
- * the framework picks it up live, so after the first restart enabling the
- * feature nobody has to reboot again.
+ * Automatic keybox renewal, only scheduled while the keybox switch is on. It
+ * fetches the catalog and installs a fresh keybox through the system_server
+ * service; the framework picks it up live, so after the first restart
+ * enabling the feature nobody has to reboot again.
  */
 class IntegrityJobService : JobService() {
 
     override fun onStartJob(params: JobParameters): Boolean {
-        if (!Integrity.enabled(Integrity.SPECTER)) {
+        if (!Integrity.enabled(Integrity.KEYBOX)) {
             cancel(applicationContext)
             return false
         }

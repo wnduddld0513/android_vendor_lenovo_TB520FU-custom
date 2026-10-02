@@ -1,12 +1,12 @@
 # Play Integrity Fix (no root, no modules)
 
-An optional firmware level Play Integrity Fix, exposed in the "Custom features"
+An optional firmware level Play Integrity Fix, exposed in the "Custom Tweaks"
 app (Settings > System). No Magisk, KernelSU, Zygisk, root or `/data/adb` files
 are involved.
 
 ## The switch
 
-"Custom features" > "Play Store" > **Play Integrity Fix** arms the whole
+"Custom Tweaks" > "Play Store" > **Play Integrity Fix** arms the whole
 feature; the options and the status live on its own screen ("Play Integrity Fix
 settings"). An unset switch means on, so a fresh install and a factory reset
 start with it enabled; the app writes an explicit 0 or 1 once the switch is
@@ -17,13 +17,13 @@ updates apply live afterwards.
 
 ## The management screen
 
-* **Keybox** - state (installed, source, serial), the spare pool, automatic
-  renewal, "Replace automatically when revoked", "Renew now" and "Delete
-  keybox".
-* **TEE simulator** - state, the keybox in use, "All apps", "Add new apps
+* **Keybox Manager** - state (installed, source, serial), the spare pool,
+  automatic renewal, "Replace automatically when revoked", "Renew now" and
+  "Delete keybox".
+* **TEE Simulator** - state, the keybox in use, "All apps", "Add new apps
   automatically", "Add all installed apps" and the target list.
-* **Play Integrity fingerprint** - the data state, the security patch and the
-  fingerprint it carries, "Fetch now" and "Delete fingerprint data".
+* **PIF** - pif.json status, the security patch and the fingerprint it
+  carries, "Fetch now" and "Delete pif.json".
 * **Automatic checks** - the check interval and the unlock cooldown. Both are
   thirty minutes by default and can be set from fifteen minutes up to six
   hours; every unlock restarts the countdown and a check runs once it has

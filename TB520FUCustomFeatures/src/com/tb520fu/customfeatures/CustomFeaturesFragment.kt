@@ -13,7 +13,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 
 /**
- * Main screen of the "Custom features" app: game performance, the Play
+ * Main screen of the "Custom Tweaks" app: game performance, the Play
  * Integrity Fix switch and the installer spoof switch. The features live here
  * (not in TB520FUParts) because they are optional customizations; the device
  * tree builds without them.

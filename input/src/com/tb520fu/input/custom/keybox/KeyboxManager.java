@@ -56,13 +56,12 @@ import java.util.Set;
  *   /data/system/tb520fu/targets.txt          "all" or "list" + one package per line
  *   /data/system/tb520fu/auto_target          "1" while new apps are added to the list
  *
- * Like Specter, the app keeps several keyboxes around and swaps the active one
+ * The app keeps several keyboxes around and swaps the active one
  * when it is revoked or fails, so a renewal never leaves the device without a
  * working keybox.
  *
  * A keybox has an EC and an RSA key set, each with a private key and a
- * certificate chain whose first certificate is signed by the private key (the
- * same layout TrickyStore / TEESimulator and Specter's catalog use).
+ * certificate chain whose first certificate is signed by the private key.
  */
 final class KeyboxManager {
     private static final String TAG = "TB520FUKeybox";

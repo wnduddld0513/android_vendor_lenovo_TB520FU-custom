@@ -17,25 +17,19 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
 /**
- * Keybox renewal, the data paths of the Specter module ported to the firmware
- * (Specter itself is a Magisk / KernelSU module; only its catalog, revocation
- * and download logic is used here):
+ * Keybox renewal: fetches the current keybox from the keybox catalog, checks
+ * the public revocation list and installs it through the system_server
+ * service.
  *
- *   catalog      https://rawbin.dpejoh.com/catalog   (source/version entries)
- *   keybox       https://rawbin.dpejoh.com/key/<source>/<version>
- *   revocation   https://android.googleapis.com/attestation/status?encrypted=0
- *
- * Renewal follows Specter's defaults: one working catalog entry is downloaded
- * and installed as the active keybox, with Specter's fallback list (Yuri/8)
- * when the catalog cannot be reached, and one spare is kept so a revoked
- * keybox can be swapped in without waiting for the network (the pool never
- * holds more than the active one and its pair, and it is only touched here).
+ * One working catalog entry is downloaded and installed as the active keybox,
+ * with a built-in fallback list when the catalog cannot be reached, and one
+ * spare is kept so a revoked keybox can be swapped in without waiting for the
+ * network (the pool never holds more than the active one and its pair, and it
+ * is only touched here).
  *
  * [renew] swaps the active keybox automatically when it was revoked (the
  * "replace automatically" switch, on by default); with the switch off only an
- * explicit renewal (the button) replaces it. Specter delivers the keyboxes as
- * base64 blobs with a shuffled alphabet; they are decoded here exactly like
- * `keybox.sh` does.
+ * explicit renewal (the button) replaces it.
  */
 object KeyboxRenewal {
 
@@ -58,13 +52,13 @@ object KeyboxRenewal {
     private const val EXTRA_KEYBOX_URL =
             "https://raw.githubusercontent.com/MeowDump/MeowDump/refs/heads/main/Megatron"
 
-    /** Spares kept besides the active keybox (Specter's single fallback pair). */
+    /** Spares kept besides the active keybox. */
     private const val POOL_TARGET = 1
 
-    /** Specter's FALLBACK_KEYBOXES (constants.sh): used when the catalog is down. */
+    /** Used when the catalog is down. */
     private val FALLBACK_KEYBOXES = listOf("Yuri" to "8")
 
-    /** keybox.sh decodes the catalog blob with these alphabets (decode_substitution). */
+    /** The catalog blobs ship with this substitution alphabet. */
     private const val STD_ALPHABET =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
     private const val SHUFFLED_ALPHABET =
@@ -117,7 +111,7 @@ object KeyboxRenewal {
             }
         }
 
-        // Keep one spare ready, like Specter's fallback pair.
+        // Keep one spare ready.
         val spareCount = IntegrityServiceClient.pool().count { !it.active }
         if (spareCount < POOL_TARGET && SystemClock.elapsedRealtime() < deadline) {
             downloadAndStore(candidates, revocations, catalog, deadline)
@@ -236,8 +230,7 @@ object KeyboxRenewal {
     /**
      * Candidates in priority order: the newest known working keybox, the
      * working entries, then every entry the catalog does not mark as dead,
-     * and finally the newest upload per source. (Specter does not use the
-     * catalog's "autoOverride" tag, so neither do we.)
+     * and finally the newest upload per source.
      * Revoked and softbanned entries are skipped right away - a softbanned
      * keybox is usually not on the revocation list but Google rejects it all
      * the same - so a burnt catalog falls through to the next source (and
@@ -277,10 +270,7 @@ object KeyboxRenewal {
         return candidates
     }
 
-    /**
-     * Decodes the extra source's file into the keybox XML (it ships through
-     * several encoding layers).
-     */
+    /** Decodes the extra source's file into the keybox XML. */
     private fun decodeExtraBlob(blob: String): String? {
         return try {
             var bytes = blob.toByteArray(Charsets.UTF_8)
@@ -320,10 +310,7 @@ object KeyboxRenewal {
         }
     }
 
-    /**
-     * Specter's decode_keybox_blob: map the shuffled alphabet back to the
-     * standard one, then base64 decode to the keybox XML.
-     */
+    /** Decodes a downloaded keybox blob into the keybox XML. */
     private fun decodeKeyboxBlob(blob: String): String? {
         return try {
             val mapped = StringBuilder(blob.length)

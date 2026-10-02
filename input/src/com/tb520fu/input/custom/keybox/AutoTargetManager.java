@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Keeps the attestation target list in step with the installed apps, the ROM
- * port of Specter's auto target (inotify on /data/app + a five minute poll):
+ * Keeps the attestation target list in step with the installed apps (inotify
+ * on /data/app plus a five minute poll):
  *
  *  - every newly installed app (third party, like `pm list packages -3`) is
  *    added to the target list,

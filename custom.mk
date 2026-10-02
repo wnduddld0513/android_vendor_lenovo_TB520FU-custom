@@ -8,7 +8,7 @@
 # device tree builds a plain PixelOS without this repository.
 #
 
-# Custom features app (Settings > System), TB520FUParts stays the device port)
+# Custom Tweaks app (Settings > System), TB520FUParts stays the device port)
 PRODUCT_PACKAGES += \
     TB520FUCustomFeatures
 
@@ -18,7 +18,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     tb520fu-input-custom
 
-# Play Integrity spoofing ("Custom features" > Integrity): snapshots
+# Play Integrity spoofing ("Custom Tweaks" > Play Store): snapshots
 # persist.sys.tb520fu.integrity_* into sys.tb520fu.integrity_* at boot.
 # Needs patches/frameworks_base-0006 (keybox attestation) and -0007 (PIF
 # toggle); the keybox service lives in tb520fu-input-custom.jar.

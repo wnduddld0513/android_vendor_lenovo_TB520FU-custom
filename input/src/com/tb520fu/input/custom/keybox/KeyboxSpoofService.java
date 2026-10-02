@@ -28,7 +28,7 @@ import java.util.List;
  * the service rewrites the chain with the active keybox and returns it. The
  * keybox private keys never leave this process.
  *
- * The Custom features app manages the keybox (a pool of spare keyboxes, the
+ * The Custom Tweaks app manages the keybox (a pool of spare keyboxes, the
  * renewal, the target list and the fingerprint data) through the admin
  * transactions. Patching is only active while sys.tb520fu.integrity_teesim is
  * 1 (snapshot of the switch, see init.tb520fu.integrity.rc); with the feature
@@ -85,7 +85,7 @@ public final class KeyboxSpoofService {
     private static void cleanupIfDisabled(Context context) {
         if (!SystemProperties.getBoolean(PROP_TEESIM, true)) {
             KeyboxManager.wipeTargets();
-            if (!SystemProperties.getBoolean("sys.tb520fu.integrity_specter", false)) {
+            if (!SystemProperties.getBoolean("sys.tb520fu.integrity_keybox", false)) {
                 KeyboxManager.clearAll();
             }
             Log.i(TAG, "TEE simulator off, target list and keyboxes cleaned");
@@ -342,8 +342,8 @@ public final class KeyboxSpoofService {
             boolean enabled = data.readInt() != 0;
             KeyboxManager.setAutoTarget(enabled);
             if (enabled) {
-                // Mirror Specter: enabling the feature also picks up what is
-                // installed already.
+                // Enabling the feature also picks up what is installed
+                // already.
                 AutoTargetManager.sync(mContext);
             }
             reply.writeInt(0);

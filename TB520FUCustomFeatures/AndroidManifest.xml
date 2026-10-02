@@ -34,13 +34,13 @@
             <!-- Order within the Settings "Automation and intelligence" tile
                  group. The device tree's "Lenovo features" (com.tb520fu.parts)
                  has no order (0) and the group sorts by order descending, then
-                 by package name, so a negative order puts "Custom features"
+                 by package name, so a negative order puts "Custom Tweaks"
                  below it. -->
             <meta-data android:name="com.android.settings.order"
                        android:value="-1" />
         </activity>
 
-        <!-- Keybox renewal (Specter port); scheduled only while the switch is on -->
+        <!-- Keybox renewal; scheduled only while the switch is on -->
         <service
             android:name=".IntegrityJobService"
             android:exported="true"
@@ -54,7 +54,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Faster revocation/softban detection while the tablet is in use -->
+        <!-- Faster revocation detection while the tablet is in use -->
         <receiver
             android:name=".IntegrityUnlockReceiver"
             android:exported="false">

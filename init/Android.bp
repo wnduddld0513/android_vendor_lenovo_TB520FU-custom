@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-// Optional Play Integrity spoofing: snapshot the "Custom features" > Integrity
+// Optional Play Integrity spoofing: snapshot the "Custom Tweaks" > Play Store
 // switches (persist.sys.tb520fu.integrity_*) at boot. The framework hooks and
 // the tb520fu-input-custom keybox service read only the sys.* snapshots.
 prebuilt_etc {

@@ -12,17 +12,18 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 
 /**
- * Extra, cheap check of Google's revocation list and Specter's catalog when
- * the tablet is unlocked, throttled to one check every ten minutes. The
- * periodic job already checks every fifteen minutes; this makes sure a
- * freshly revoked keybox is swapped while the tablet is actually being used
- * (periodic jobs are deferred in Doze), and it costs two small requests.
+ * Extra, cheap check of the keybox catalog and Google's revocation list when
+ * the tablet is unlocked, throttled by the configured unlock cooldown (thirty
+ * minutes by default). The periodic job checks on its own interval; this
+ * makes sure a keybox that stopped being accepted is swapped while the tablet
+ * is actually being used (periodic jobs are deferred in Doze), and it costs
+ * two small requests.
  */
 class IntegrityUnlockReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_USER_PRESENT) return
-        if (!Integrity.enabled(Integrity.SPECTER)) return
+        if (!Integrity.enabled(Integrity.KEYBOX)) return
         // Every unlock restarts the shared countdown; a check only runs when
         // the cooldown had already elapsed.
         val due = CheckCooldown.due(context, CheckCooldown.unlockMinutes(context))

@@ -272,7 +272,7 @@ index 0000000..4e46f42
 + * cached here per app until the service generation changes (a renewed keybox).
 + *
 + * Everything is inert unless sys.tb520fu.integrity_teesim is 1 (the boot
-+ * snapshot of the "TEE simulator" switch in "Custom features"), and when the
++ * snapshot of the "TEE Simulator" switch in "Custom Tweaks"), and when the
 + * service is missing (a build without the customizations repository) nothing
 + * is called at all.
 + *

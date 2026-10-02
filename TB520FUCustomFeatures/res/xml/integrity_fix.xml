@@ -7,7 +7,7 @@
     android:title="@string/integrity_fix_title">
 
     <PreferenceCategory android:key="integrity_keybox"
-        android:title="@string/specter_title">
+        android:title="@string/keybox_manager_title">
 
         <Preference android:key="keybox_state"
             android:title="@string/keybox_state_title"

@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 The LineageOS Project
 // SPDX-License-Identifier: Apache-2.0
 //
-// "Custom features" (Settings > System): the optional TB520FU customizations
-// with a UI - game performance and the Play Store identity. The device tree's
+// "Custom Tweaks" (Settings > System): the optional TB520FU customizations
+// with a UI - game performance and the Play Integrity Fix. The device tree's
 // TB520FUParts stays the device port; this app exists only while
 // vendor/lenovo/TB520FU-custom is synced.
 //

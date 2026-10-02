@@ -30,7 +30,7 @@ public final class CustomInput implements InputExtension {
         mContext = context.getApplicationContext();
         mGamePerf = new GamePerfController(context, handler);
         mNotes = new NotesPreinstall(context, handler);
-        // Key attestation spoofing service ("Custom features" > Integrity);
+        // Key attestation spoofing service ("Custom Tweaks" > Play Store);
         // it is inert until sys.tb520fu.integrity_teesim is 1.
         Safe.run("keybox spoof service",
                 () -> KeyboxSpoofService.publish(context, handler)).run();
