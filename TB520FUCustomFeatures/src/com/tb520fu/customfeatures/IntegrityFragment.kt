@@ -172,7 +172,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         val watchdog = Runnable {
             if (!done.compareAndSet(false, true) || !isAdded) return@Runnable
             renew.isEnabled = true
-            renew.summary = getString(R.string.keybox_renew_failed)
+            renew.summary = getString(R.string.keybox_renew_summary)
             Toast.makeText(requireContext(), R.string.keybox_renew_failed, Toast.LENGTH_LONG).show()
             refresh()
         }
@@ -188,6 +188,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
                 handler.removeCallbacks(watchdog)
                 if (!isAdded) return@runOnUiThread
                 renew.isEnabled = true
+                renew.summary = getString(R.string.keybox_renew_summary)
                 var message = when (result) {
                     is KeyboxRenewal.Result.Ok ->
                         getString(R.string.keybox_renew_ok, result.source, result.version)
@@ -370,7 +371,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
         val watchdog = Runnable {
             if (!done.compareAndSet(false, true) || !isAdded) return@Runnable
             refresh.isEnabled = true
-            refresh.summary = getString(R.string.pif_refresh_failed)
+            refresh.summary = getString(R.string.pif_refresh_summary)
             Toast.makeText(requireContext(), R.string.pif_refresh_failed, Toast.LENGTH_LONG).show()
             refresh()
         }
@@ -387,6 +388,7 @@ class IntegrityFragment : SettingsBasePreferenceFragment() {
                 handler.removeCallbacks(watchdog)
                 if (!isAdded) return@runOnUiThread
                 refresh.isEnabled = true
+                refresh.summary = getString(R.string.pif_refresh_summary)
                 Toast.makeText(
                     requireContext(),
                     if (installed) R.string.pif_refresh_ok else R.string.pif_refresh_failed,
