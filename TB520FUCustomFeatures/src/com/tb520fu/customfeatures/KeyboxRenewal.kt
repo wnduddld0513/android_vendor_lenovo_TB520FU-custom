@@ -150,7 +150,8 @@ object KeyboxRenewal {
 
     private fun candidates(catalog: String?): List<Pair<String, String>> {
         val fromCatalog = if (catalog != null) catalogCandidates(catalog) else emptyList()
-        return if (fromCatalog.isEmpty()) FALLBACK_KEYBOXES else fromCatalog
+        // The built-in fallback is tried last, whatever the catalog said.
+        return (fromCatalog + FALLBACK_KEYBOXES).distinct()
     }
 
     /**
@@ -217,40 +218,32 @@ object KeyboxRenewal {
         return xml
     }
 
-    /** workingEntries first, then working, then non-softbanned entries. */
+    /**
+     * Candidates in priority order: the newest known working keybox, the
+     * working entries, then every entry the catalog does not mark as dead.
+     * Revoked and softbanned entries are skipped right away - a softbanned
+     * keybox is usually not on the revocation list but Google rejects it all
+     * the same - so a burnt catalog falls through to the next source (and
+     * finally to the built-in fallback) instead of stopping at a dead entry.
+     */
     private fun catalogCandidates(catalog: String): List<Pair<String, String>> {
         val candidates = mutableListOf<Pair<String, String>>()
+        val seen = HashSet<String>()
+        fun add(source: String, version: String) {
+            if (source.isEmpty() || version.isEmpty()) return
+            if (seen.add("$source/$version")) candidates.add(source to version)
+        }
         try {
             val json = JSONObject(catalog)
-            json.optJSONArray("workingEntries")?.let { entries ->
-                for (i in 0 until entries.length()) {
-                    val entry = entries.optJSONObject(i) ?: continue
-                    val source = entry.optString("source")
-                    val version = entry.optString("version")
-                    if (source.isNotEmpty() && version.isNotEmpty()) {
-                        candidates.add(source to version)
-                    }
-                }
+            json.optJSONObject("working")?.let { working ->
+                add(working.optString("source"), working.optString("version"))
             }
-            if (candidates.isEmpty()) {
-                json.optJSONObject("working")?.let { working ->
-                    val source = working.optString("source")
-                    val version = working.optString("version")
-                    if (source.isNotEmpty() && version.isNotEmpty()) {
-                        candidates.add(source to version)
-                    }
-                }
-            }
-            if (candidates.isEmpty()) {
-                json.optJSONArray("entries")?.let { entries ->
+            for (key in arrayOf("workingEntries", "entries")) {
+                json.optJSONArray(key)?.let { entries ->
                     for (i in 0 until entries.length()) {
                         val entry = entries.optJSONObject(i) ?: continue
-                        if (entry.optBoolean("softbanned") || entry.optBoolean("revoked")) continue
-                        val source = entry.optString("source")
-                        val version = entry.optString("version")
-                        if (source.isNotEmpty() && version.isNotEmpty()) {
-                            candidates.add(source to version)
-                        }
+                        if (entry.optBoolean("revoked") || entry.optBoolean("softbanned")) continue
+                        add(entry.optString("source"), entry.optString("version"))
                     }
                 }
             }
